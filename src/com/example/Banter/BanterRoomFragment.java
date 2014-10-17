@@ -16,8 +16,6 @@ public class BanterRoomFragment extends Fragment {
         getActivity().setContentView(R.layout.banterroomlayout);
         banterRoomFragment = inflater.inflate(R.layout.banterroomlayout,container,false);
 
-
-
         return banterRoomFragment;
     }
 }
