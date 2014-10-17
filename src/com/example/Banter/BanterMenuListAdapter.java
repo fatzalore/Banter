@@ -16,27 +16,36 @@ public class BanterMenuListAdapter extends ArrayAdapter<String> {
     private Context context;
     private String[] values;
 
+    static class ViewHolderItem{
+        TextView groupName;
+        TextView lastUpdated;
+        TextView posts;
+    }
+
     public BanterMenuListAdapter(Context context, String[] values){
-        super(context,R.layout.bantermenuitem);
+        super(context,R.layout.bantermenuitem,values);
         this.context = context;
         this.values = values;
     }
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent){
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row = inflater.inflate(R.layout.bantermenuitem,parent,false);
-        TextView gropuname = (TextView) row.findViewById(R.id.groupname);
-        TextView lastupdated = (TextView) row.findViewById(R.id.lastupdated);
-        TextView posts = (TextView) row.findViewById(R.id.posts);
 
-        /* For test */
-        gropuname.setText(values[0]);
-        lastupdated.setText(values[1]);
-        posts.setText(values[2]);
-        Log.v("@@@@@@@@@@@@@@@",gropuname.getText().toString());
-        Log.v("@@@@@@@@@@@@@@@",lastupdated.getText().toString());
-        Log.v("@@@@@@@@@@@@@@@",posts.getText().toString());
+        ViewHolderItem viewHolderItem;
 
-        return row;
+        if(convertView == null){
+            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.bantermenuitem,parent,false);
+            viewHolderItem = new ViewHolderItem();
+            viewHolderItem.groupName = (TextView) convertView.findViewById(R.id.groupname);
+            viewHolderItem.lastUpdated = (TextView) convertView.findViewById(R.id.lastupdated);
+            viewHolderItem.posts = (TextView) convertView.findViewById(R.id.posts);
+            convertView.setTag(viewHolderItem);
+        } else {
+            viewHolderItem = (ViewHolderItem) convertView.getTag();
+        }
+        viewHolderItem.groupName.setText(values[0]);
+        viewHolderItem.lastUpdated.setText(values[1]);
+        viewHolderItem.posts.setText(values[2]);
+        return convertView;
     }
 }

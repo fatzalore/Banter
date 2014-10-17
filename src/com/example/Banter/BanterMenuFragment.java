@@ -21,8 +21,7 @@ public class BanterMenuFragment extends Fragment {
         setHasOptionsMenu(true);
         getActivity().setContentView(R.layout.bantermenulayout);
         banterMenuFragment = inflater.inflate(R.layout.bantermenulayout,container,false);
-        banterRoomList = (ListView) getActivity().findViewById(R.id.banterroomlist);
-        Log.v("@@@@@@@@@@@@@@@@", ""+banterRoomList.isFocusable());
+        banterRoomList = (ListView) banterMenuFragment.findViewById(R.id.banterroomlist);
         // testing
         String[] test = {"GROUPNAME","16 October 2014, 14:25:55","842"};
         banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),test);
