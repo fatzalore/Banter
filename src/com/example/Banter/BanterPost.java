@@ -14,6 +14,7 @@ public class BanterPost {
     private String text;
     private Bitmap image;
     private String time;
+    private int likes;
 
     public BanterPost() {
 
@@ -28,6 +29,14 @@ public class BanterPost {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         time = sdfDate.format(now);
+    }
+
+    public void incrementLikes() {
+        likes++;
+    }
+
+    public void decrementLikes() {
+        likes--;
     }
 
     public String getName() {
@@ -60,5 +69,13 @@ public class BanterPost {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.Banter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -11,6 +12,7 @@ public class BanterRoom {
     private int id;
     private String name;
     private String dateCreated;
+    private ArrayList<BanterPost> posts;
 
     public BanterRoom(String name) {
         this.name = name;
@@ -19,6 +21,16 @@ public class BanterRoom {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         dateCreated = sdfDate.format(now);
+
+        posts = new ArrayList<BanterPost>();
+    }
+
+    public void addPost(BanterPost post) {
+        posts.add(post);
+    }
+
+    public ArrayList<BanterPost> getPosts() {
+        return posts;
     }
 
     public int getId() {
