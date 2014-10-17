@@ -1,18 +1,29 @@
 package com.example.Banter;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class BanterActivity extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
+
+    BanterMenuFragment banterMenuFragment;
+    BanterRoomFragment banterRoomFragment;
+    FragmentTransaction fragmentTransaction;
+    FragmentManager fragmentManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.bantermenulayout);
+
+        fragmentManager = getFragmentManager();
+
+        banterMenuFragment = new BanterMenuFragment();
+        banterRoomFragment = new BanterRoomFragment();
+        transact(banterMenuFragment);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -27,5 +38,11 @@ public class BanterActivity extends Activity {
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+    /* Transaction between fragments */
+    public void transact(Fragment to){
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(android.R.id.content,to);
+        fragmentTransaction.commit();
     }
 }
