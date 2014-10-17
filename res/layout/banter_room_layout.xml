@@ -25,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.5"
-                android:background="@drawable/ab_bottom_solid_banter"/>
+                android:background="@drawable/ab_bottom_solid_banter"
+                />
 
             <LinearLayout
                     android:layout_width="match_parent"
