@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="1">
+
+    <ListView
+            android:id="@+id/room_chat_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+
+            />
+    
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            android:weightSum="1">
+
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/ab_bottom_solid_banter"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"
+                    android:weightSum="1"
+                    android:background="@drawable/ab_bottom_solid_banter"
+                    >
+
+                    <ImageButton
+                            android:id="@+id/room_post_camera_button"
+                            android:src="@drawable/ic_action_photo"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25"
+
+                                />
+                    <ImageButton
+                            android:id="@+id/room_post_image_button"
+                            android:src="@drawable/ic_action_attach"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25"
+                            />
+                    <ImageButton
+                            android:id="@+id/room_post_smiley_button"
+                            android:src="@drawable/ic_action_user"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25"
+                            />
+                    <ImageButton
+                            android:id="@+id/room_post_submit_button"
+                            android:src="@drawable/ic_action_done"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25"
+                            />
+
+                    </LinearLayout>
+
+            </LinearLayout>
+
+</LinearLayout>

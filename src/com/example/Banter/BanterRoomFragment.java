@@ -13,8 +13,8 @@ public class BanterRoomFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        getActivity().setContentView(R.layout.banterroomlayout);
-        banterRoomFragment = inflater.inflate(R.layout.banterroomlayout,container,false);
+        getActivity().setContentView(R.layout.banter_room_layout);
+        banterRoomFragment = inflater.inflate(R.layout.banter_room_layout,container,false);
 
         return banterRoomFragment;
     }

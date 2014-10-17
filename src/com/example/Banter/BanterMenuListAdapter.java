@@ -1,7 +1,6 @@
 package com.example.Banter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ public class BanterMenuListAdapter extends ArrayAdapter<String> {
     }
 
     public BanterMenuListAdapter(Context context, String[] values){
-        super(context,R.layout.bantermenuitem,values);
+        super(context,R.layout.banter_menu_item,values);
         this.context = context;
         this.values = values;
     }
@@ -34,7 +33,7 @@ public class BanterMenuListAdapter extends ArrayAdapter<String> {
 
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.bantermenuitem,parent,false);
+            convertView = inflater.inflate(R.layout.banter_menu_item,parent,false);
             viewHolderItem = new ViewHolderItem();
             viewHolderItem.groupName = (TextView) convertView.findViewById(R.id.groupname);
             viewHolderItem.lastUpdated = (TextView) convertView.findViewById(R.id.lastupdated);

@@ -8,6 +8,9 @@
     <ListView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/banterroomlist" android:layout_gravity="center_horizontal" android:clickable="false"
-            android:focusable="false" android:focusableInTouchMode="false"/>
+            android:id="@+id/banter_room_list"
+            android:layout_gravity="center_horizontal"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 </LinearLayout>

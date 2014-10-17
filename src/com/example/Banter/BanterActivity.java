@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class BanterActivity extends Activity {
+public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
     BanterMenuFragment banterMenuFragment;
     BanterRoomFragment banterRoomFragment;
@@ -46,5 +46,10 @@ public class BanterActivity extends Activity {
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(android.R.id.content,to);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void transactToRoomFragment() {
+        transact(banterRoomFragment);
     }
 }
