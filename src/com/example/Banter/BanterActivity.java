@@ -5,11 +5,13 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
+    int currentFragment = -1;
     BanterMenuFragment banterMenuFragment;
     BanterRoomFragment banterRoomFragment;
     FragmentTransaction fragmentTransaction;
@@ -24,6 +26,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
         transact(banterMenuFragment);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -42,14 +45,23 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         return super.onOptionsItemSelected(menuItem);
     }
     /* Transaction between fragments */
-    public void transact(Fragment to){
+    public void transact(Fragment to) {
+        currentFragment++;
         fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(android.R.id.content,to);
+        fragmentTransaction.replace(android.R.id.content, to);
+        fragmentTransaction.addToBackStack("MenuFragment");
         fragmentTransaction.commit();
     }
 
-    @Override
     public void transactToRoomFragment() {
         transact(banterRoomFragment);
+    }
+    @Override
+    public void onBackPressed() {
+        currentFragment--;
+        if(currentFragment < 0){
+            finish();
+        }
+        super.onBackPressed();
     }
 }
