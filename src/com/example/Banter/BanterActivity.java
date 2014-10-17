@@ -36,6 +36,8 @@ public class BanterActivity extends Activity {
                 break;
             case R.id.search:
                 break;
+            case R.id.options:
+                break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
