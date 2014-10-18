@@ -32,9 +32,11 @@ public class BanterRoomFragment extends Fragment {
         testPost1.setName("Ali baba");
         testPost1.setLikes(9);
         testPost1.setText("Lorem ipsum .... blablablabla Banter i massevis");
+        testPost1.setTimeAndDateToNow();
         BanterPost testPost2 = new BanterPost();
         testPost2.setName("Venn av ali baba");
-        testPost2.setLikes(9);
+        testPost2.setLikes(-11);
+        testPost2.setTimeAndDateToNow();
         testPost2.setText("Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis");
         testData.add(testPost1);
         testData.add(testPost2);

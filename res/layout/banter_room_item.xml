@@ -12,7 +12,7 @@
             android:layout_below="@+id/room_chat_list_time"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/room_chat_list_likes"
+            android:layout_toLeftOf="@+id/room_chat_likes_layout"
             android:layout_marginRight="6dip"
             android:src="@drawable/banter_logo_v1"
             android:visibility="gone"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/room_chat_list_likes"
+            android:layout_toLeftOf="@+id/room_chat_likes_layout"
             android:ellipsize="marquee"
             android:singleLine="true"
             android:textSize="16sp"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/room_chat_list_name"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/room_chat_list_likes"
+            android:layout_toLeftOf="@+id/room_chat_likes_layout"
             android:textSize="12sp"
             android:paddingLeft="6dp"
             />
@@ -48,30 +48,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/room_chat_list_text"
-            android:layout_toLeftOf="@+id/room_chat_list_likes"
+            android:layout_toLeftOf="@+id/room_chat_likes_layout"
             android:layout_alignParentLeft="true"
             android:textSize="8sp"
+            android:textColor="#C0C0C0"
             android:singleLine="true"
             android:paddingLeft="6dp"
             />
 
-    <ImageButton
-            android:id="@+id/room_chat_list_like_inc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_above="@+id/room_chat_list_likes"
-            android:layout_toRightOf="@+id/room_chat_list_name"
-
-            />
-
-    <TextView
-            android:id="@+id/room_chat_list_likes"
+    <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/room_chat_likes_layout"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:paddingRight="6dp"
-            android:textSize="16sp"
-            />
+            android:gravity="center"
+            >
+
+        <ImageButton
+                android:id="@+id/room_chat_list_like_inc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_up"
+                android:background="@drawable/ab_transparent_banter"
+                />
+
+
+        <TextView
+                android:id="@+id/room_chat_list_likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:padding="6dp"
+                android:textSize="16sp"
+                />
+
+
+        <ImageButton
+                android:id="@+id/room_chat_list_like_dec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_down"
+                android:background="@drawable/ab_transparent_banter"
+                />
+
+
+    </LinearLayout>
+
+
+
+
 
 </RelativeLayout>

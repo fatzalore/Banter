@@ -23,7 +23,7 @@ public class BanterPost {
     /**
      * Sets the current objects time to the time when this method is called.
      */
-    public void setTimeAndDate() {
+    public void setTimeAndDateToNow() {
 
         /* retrieve current time and date */
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
