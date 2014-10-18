@@ -98,6 +98,14 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             @Override
             public void onClick(View v) {
                 // TODO IMPLEMENT SAVING
+                /* FOR TESTING ONLY */
+                try {
+                    BanterRoom banterRoom = new BanterRoom(dialogRoomName.getText().toString());
+                    banterMenuFragment.addBanterRoomToList(banterRoom);
+                    dialog.dismiss();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
         dialogNo.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +119,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     }
 
     private void toggleSearchField(){
-        EditText searchField = (EditText) banterMenuFragment.banterMenuFragment.findViewById(R.id.menu_search_field);
+        EditText searchField = (EditText) banterMenuFragment.getBanterMenuFragment().findViewById(R.id.menu_search_field);
         if(searchField.getVisibility() == View.VISIBLE){
             searchField.setVisibility(View.GONE);
         } else {
