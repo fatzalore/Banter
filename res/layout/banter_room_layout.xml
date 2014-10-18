@@ -29,6 +29,13 @@
                 android:paddingTop="4dp"
                 android:paddingBottom="2dp" >
 
+            <ImageView
+                    android:id="@+id/room_post_camera_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    />
+
             <EditText
 
                     android:id="@+id/room_post_text"
