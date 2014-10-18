@@ -27,7 +27,7 @@
             android:layout_toLeftOf="@+id/room_chat_likes_layout"
             android:ellipsize="marquee"
             android:singleLine="true"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:paddingLeft="6dp"
 
             />
@@ -39,7 +39,7 @@
             android:layout_below="@id/room_chat_list_name"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/room_chat_likes_layout"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:paddingLeft="6dp"
             />
 
@@ -50,7 +50,7 @@
             android:layout_below="@id/room_chat_list_text"
             android:layout_toLeftOf="@+id/room_chat_likes_layout"
             android:layout_alignParentLeft="true"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:textColor="#C0C0C0"
             android:singleLine="true"
             android:paddingLeft="6dp"
@@ -63,7 +63,7 @@
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
             android:gravity="center"
-            >
+            android:layout_centerVertical="true">
 
         <ImageButton
                 android:id="@+id/room_chat_list_like_inc"
