@@ -31,7 +31,6 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         super(context, R.layout.banter_room_item, values);
         this.context = context;
         this.values = values;
-        Log.v("", "Size of values: " + values.size());
     }
 
     @Override
