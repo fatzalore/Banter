@@ -12,6 +12,8 @@ public class BanterRoom {
     private int id;
     private String name;
     private String dateCreated;
+    private String lastUpdated;
+    private String likes;
     private ArrayList<BanterPost> posts;
 
     public BanterRoom(String name) {
@@ -21,7 +23,8 @@ public class BanterRoom {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         dateCreated = sdfDate.format(now);
-
+        lastUpdated = dateCreated;
+        likes = Integer.toString(15);
         posts = new ArrayList<BanterPost>();
     }
 
@@ -55,5 +58,19 @@ public class BanterRoom {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setLastUpdated(Date updated){
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        lastUpdated = sdfDate.format(updated);
+    }
+    public String getLastUpdated(){
+        return lastUpdated;
+    }
+    public void setLikes(int likes){
+        this.likes = Integer.toString(likes);
+    }
+    public String getLikes(){
+        return likes;
     }
 }

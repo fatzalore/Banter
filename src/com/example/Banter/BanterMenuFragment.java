@@ -7,6 +7,8 @@ import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 /**
  * Created by jacobmeidell on 17.10.14.
  */
@@ -23,8 +25,9 @@ public class BanterMenuFragment extends Fragment {
         banterMenuFragment = inflater.inflate(R.layout.banter_menu_layout,container,false);
         banterRoomList = (ListView) banterMenuFragment.findViewById(R.id.banter_room_list);
         // testing
-        String[] test = {"GROUPNAME","16 October 2014, 14:25:55","842"};
-        banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),test);
+        ArrayList<BanterRoom> testdata = new ArrayList<BanterRoom>();
+        testdata.add(new BanterRoom("NTNUI A-LAG"));
+        banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),testdata);
         banterRoomList.setAdapter(banterMenuListAdapter);
         // testing
 
