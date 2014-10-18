@@ -20,7 +20,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
     private ArrayList<BanterPost> values;
 
     static class ViewHolderItem{
-        //ImageView image;
+        ImageView image;
         TextView name;
         TextView text;
         TextView time;
@@ -39,21 +39,26 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
     }
 
     @Override
-    public View getView(final int position, View convertView, final ViewGroup parent){
+    public View getView(final int position, View convertView, final ViewGroup parent) {
 
         ViewHolderItem viewHolderItem;
 
-        if(convertView == null){
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.banter_room_item,parent,false);
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.banter_room_item, parent, false);
             viewHolderItem = new ViewHolderItem();
             viewHolderItem.name = (TextView) convertView.findViewById(R.id.room_chat_list_name);
             viewHolderItem.time = (TextView) convertView.findViewById(R.id.room_chat_list_time);
             viewHolderItem.text = (TextView) convertView.findViewById(R.id.room_chat_list_text);
             viewHolderItem.likes = (TextView) convertView.findViewById(R.id.room_chat_list_likes);
+            viewHolderItem.image = (ImageView) convertView.findViewById(R.id.room_chat_list_image);
             convertView.setTag(viewHolderItem);
         } else {
             viewHolderItem = (ViewHolderItem) convertView.getTag();
+        }
+        /* does post have image? */
+        if (values.get(position).getImage() != null) {
+            viewHolderItem.image.setImageBitmap(values.get(position).getImage());
         }
 
         viewHolderItem.name.setText(values.get(position).getName());
