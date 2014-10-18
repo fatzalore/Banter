@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent" android:paddingTop="0dp">
 
     <LinearLayout
             android:orientation="vertical"
@@ -14,33 +14,35 @@
                 android:layout_height="wrap_content"
                 android:text="GROUPNAME"
                 android:id="@+id/groupname" android:textSize="22dp" android:textStyle="bold"
-                android:paddingLeft="10dp" android:paddingTop="5dp"/>
+                android:paddingLeft="10dp" android:paddingTop="7dp"/>
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent" android:weightSum="1">
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="25dp"
+                    android:layout_height="21dp"
                     android:id="@+id/imageView" android:src="@drawable/ic_action_refresh_dark"
-                    android:paddingLeft="5dp"/>
+                    android:paddingLeft="5dp" android:longClickable="false"/>
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="LASTUPDATED"
-                    android:id="@+id/lastupdated" android:textSize="18dp" android:layout_weight="0.7"
-                    android:paddingTop="5dp" android:paddingLeft="5dp"/>
+                    android:id="@+id/lastupdated" android:textSize="14dp" android:layout_weight="0.8"
+                    android:paddingTop="5dp" android:paddingLeft="5dp"
+                    />
             <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/icon" android:layout_weight="0.1" android:src="@drawable/ic_action_copy_dark"
-                    android:alpha="255"/>
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/icon" android:src="@drawable/ic_action_copy_dark"
+                    android:alpha="255" android:paddingTop="3dp" android:layout_weight="0.00"/>
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="51234"
-                    android:id="@+id/posts" android:textSize="18dp" android:layout_weight="0.2"
-                    android:paddingRight="10dp" android:paddingTop="0dp"/>
+                    android:id="@+id/posts" android:textSize="14dp" android:layout_weight="0.2"
+                    android:paddingRight="10dp" android:paddingTop="0dp" android:paddingLeft="5dp"
+                    />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

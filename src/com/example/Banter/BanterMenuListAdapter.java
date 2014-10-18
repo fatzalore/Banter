@@ -7,21 +7,23 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 /**
  * Created by jacobmeidell on 17.10.14.
  */
-public class BanterMenuListAdapter extends ArrayAdapter<String> {
+public class BanterMenuListAdapter extends ArrayAdapter<BanterRoom> {
 
     private Context context;
-    private String[] values;
+    private ArrayList<BanterRoom> values;
 
-    static class ViewHolderItem{
+    static class ViewHolderItem {
         TextView groupName;
         TextView lastUpdated;
         TextView posts;
     }
 
-    public BanterMenuListAdapter(Context context, String[] values){
+    public BanterMenuListAdapter(Context context, ArrayList<BanterRoom> values){
         super(context,R.layout.banter_menu_item,values);
         this.context = context;
         this.values = values;
@@ -30,6 +32,7 @@ public class BanterMenuListAdapter extends ArrayAdapter<String> {
     public View getView(final int position, View convertView, final ViewGroup parent){
 
         ViewHolderItem viewHolderItem;
+        BanterRoom banterRoom = values.get(position);
 
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -42,9 +45,9 @@ public class BanterMenuListAdapter extends ArrayAdapter<String> {
         } else {
             viewHolderItem = (ViewHolderItem) convertView.getTag();
         }
-        viewHolderItem.groupName.setText(values[0]);
-        viewHolderItem.lastUpdated.setText(values[1]);
-        viewHolderItem.posts.setText(values[2]);
+        viewHolderItem.groupName.setText(banterRoom.getName());
+        viewHolderItem.lastUpdated.setText(banterRoom.getLastUpdated());
+        viewHolderItem.posts.setText(banterRoom.getLikes());
         return convertView;
     }
 }
