@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         TextView text;
         TextView time;
         TextView likes;
+        ImageButton incLike;
+        ImageButton decLike;
     }
 
     public BanterRoomListAdapter(Context context, ArrayList<BanterPost> values){
@@ -52,6 +55,8 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
             viewHolderItem.text = (TextView) convertView.findViewById(R.id.room_chat_list_text);
             viewHolderItem.likes = (TextView) convertView.findViewById(R.id.room_chat_list_likes);
             viewHolderItem.image = (ImageView) convertView.findViewById(R.id.room_chat_list_image);
+            viewHolderItem.incLike = (ImageButton) convertView.findViewById(R.id.room_chat_list_like_inc);
+            viewHolderItem.decLike = (ImageButton) convertView.findViewById(R.id.room_chat_list_like_dec);
             convertView.setTag(viewHolderItem);
         } else {
             viewHolderItem = (ViewHolderItem) convertView.getTag();
@@ -65,6 +70,24 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         viewHolderItem.text.setText(values.get(position).getText());
         viewHolderItem.likes.setText(Integer.toString(values.get(position).getLikes()));
         viewHolderItem.time.setText(values.get(position).getTime());
+
+        viewHolderItem.incLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                values.get(position).incrementLikes();
+                notifyDataSetChanged();
+                // TODO set image to a green arrow, same with on down
+            }
+        });
+
+        viewHolderItem.decLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                values.get(position).decrementLikes();
+                notifyDataSetChanged();
+            }
+        });
+
         return convertView;
     }
 }
