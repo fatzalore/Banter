@@ -109,7 +109,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
 
         dialog.show();
     }
-    
+
     private void toggleSearchField(){
         EditText searchField = (EditText) banterMenuFragment.banterMenuFragment.findViewById(R.id.menu_search_field);
         if(searchField.getVisibility() == View.VISIBLE){
