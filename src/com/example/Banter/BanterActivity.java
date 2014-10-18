@@ -1,14 +1,18 @@
 package com.example.Banter;
 
 import android.app.*;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
@@ -37,17 +41,21 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         transact(banterMenuFragment);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
         return true;
     }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem){
         switch(menuItem.getItemId()){
             case R.id.add:
                 createNewRoomDialog();
                 break;
             case R.id.search:
+                toggleSearchField();
                 break;
             case R.id.options:
                 break;
@@ -75,7 +83,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         super.onBackPressed();
     }
     /* Creates the pop up dialog to input information about new Banter Room */
-    public void createNewRoomDialog(){
+    private void createNewRoomDialog(){
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.banter_new_room_dialog);
         dialog.setTitle("Create new banter room");
@@ -100,5 +108,15 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         });
 
         dialog.show();
+    }
+    
+    private void toggleSearchField(){
+        EditText searchField = (EditText) banterMenuFragment.banterMenuFragment.findViewById(R.id.menu_search_field);
+        if(searchField.getVisibility() == View.VISIBLE){
+            searchField.setVisibility(View.GONE);
+        } else {
+            searchField.setVisibility(View.VISIBLE);
+        }
+
     }
 }
