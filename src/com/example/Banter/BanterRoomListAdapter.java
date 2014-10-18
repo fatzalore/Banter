@@ -64,6 +64,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         /* does post have image? */
         if (values.get(position).getImage() != null) {
             viewHolderItem.image.setImageBitmap(values.get(position).getImage());
+            viewHolderItem.image.setVisibility(View.VISIBLE);
         }
 
         viewHolderItem.name.setText(values.get(position).getName());

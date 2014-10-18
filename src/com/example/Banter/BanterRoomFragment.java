@@ -1,15 +1,14 @@
 package com.example.Banter;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.*;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.*;
 
 import java.util.ArrayList;
 
@@ -28,11 +27,12 @@ public class BanterRoomFragment extends Fragment {
     ImageButton smileyButton;
     ImageButton submitPostButton;
     EditText newPostText;
+    ImageView newPostImage;
 
     BanterRoomListAdapter banterRoomListAdapter;
 
     BanterPost currentPost; // This is the post that is currently written by user. When user press submit, the info (image etc.) will be retrieved from this obj.
-    //BanterRoom currentRoom; // not implemented yet
+    BanterRoom currentRoom; // room object of current room.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -49,15 +49,29 @@ public class BanterRoomFragment extends Fragment {
         smileyButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_smiley_button);
         submitPostButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_submit_button);
         newPostText = (EditText) banterRoomFragment.findViewById(R.id.room_post_text);
+        newPostImage = (ImageView) banterRoomFragment.findViewById(R.id.room_post_camera_temp);
 
+        /* bottom buttons listeners */
         addCameraListener();
         //addAttachImageListener();
         //addSmileyListener();
         addSubmitPostListener();
 
+        addOnHoldCameraTempImageListener();
 
-        /* TEST DATA! */
-        ArrayList<BanterPost> testData = new ArrayList<BanterPost>();
+        /* get data */
+        addTestData();
+
+        banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), currentRoom.getPosts());
+        banterRoomList.setAdapter(banterRoomListAdapter);
+        /* TEST DATA end */
+
+        return banterRoomFragment;
+    }
+
+    private void addTestData() {
+         /* TEST DATA! */
+        currentRoom = new BanterRoom("test room");
         BanterPost testPost1 = new BanterPost();
         testPost1.setName("Ali baba");
         testPost1.setLikes(9);
@@ -68,15 +82,9 @@ public class BanterRoomFragment extends Fragment {
         testPost2.setLikes(-11);
         testPost2.setTimeAndDateToNow();
         testPost2.setText("Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis");
-        testData.add(testPost1);
-        testData.add(testPost2);
+        currentRoom.addPost(testPost1);
+        currentRoom.addPost(testPost2);
         /* TEST DATA end*/
-
-        banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), testData);
-        banterRoomList.setAdapter(banterRoomListAdapter);
-        /* TEST DATA end */
-
-        return banterRoomFragment;
     }
 
     private void addCameraListener() {
@@ -96,7 +104,80 @@ public class BanterRoomFragment extends Fragment {
         submitPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: implement
+                /* set data into currentPost */
+                currentPost.setText(newPostText.getText().toString());
+                currentPost.setTimeAndDateToNow();
+                currentPost.setLikes(0);
+
+                if (currentPost.getImage() != null || currentPost.getText().length() > 0) {
+                    /* ok, we are ready to post */
+                    final EditText userTextView = new EditText(getActivity());
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Yes, more banter!")
+                            .setView(userTextView)
+                            .setPositiveButton("Post", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    /* save post! */
+                                    if (userTextView.getText().toString() == null ||  userTextView.getText().toString() == "")
+                                        currentPost.setName("Anonymous");
+                                    else
+                                        currentPost.setName(userTextView.getText().toString());
+
+                                    currentRoom.addPost(currentPost);
+                                    currentPost = new BanterPost();
+
+                                    /* Remove old data */
+                                    newPostImage.setVisibility(View.GONE);
+                                    newPostText.setText("");
+
+                                    /* TODO: update database */
+
+                                    /* refresh ui */
+                                    banterRoomListAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                /* user still have text and image available.. but nothing is done */
+                                }
+                            })
+                            .show();
+
+                } else {
+                    /* no image or text? not a valid post.. */
+
+                }
+            }
+        });
+    }
+
+    /* If a user holds down on a temporary picture, give option to remove */
+    private void addOnHoldCameraTempImageListener() {
+        newPostImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Remove image?")
+                        .setPositiveButton("Keep", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // nothing happens
+                            }
+                        })
+                        .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                /* remove picture from ui and data object */
+                                newPostImage.setVisibility(View.GONE);
+                                currentPost.setImage(null);
+                            }
+                        })
+                        .show();
+
+                return false;
             }
         });
     }
@@ -110,6 +191,10 @@ public class BanterRoomFragment extends Fragment {
 
                 /* store in currentPost */
                 currentPost.setImage(thumbnail);
+
+                /* show in ui */
+                newPostImage.setImageBitmap(thumbnail);
+                newPostImage.setVisibility(View.VISIBLE);
 
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 // User cancelled the image capture
