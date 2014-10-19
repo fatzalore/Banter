@@ -17,7 +17,6 @@ public class BanterMenuFragment extends Fragment {
     private View banterMenuFragment;
     private ListView banterRoomList;
     private BanterMenuListAdapter banterMenuListAdapter;
-    private ArrayList<BanterRoom> banterRooms = new ArrayList<BanterRoom>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -27,7 +26,7 @@ public class BanterMenuFragment extends Fragment {
         banterMenuFragment = inflater.inflate(R.layout.banter_menu_layout,container,false);
         banterRoomList = (ListView) banterMenuFragment.findViewById(R.id.banter_room_list);
         // testing
-        banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),banterRooms);
+        banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),BanterDataModel.banterRooms);
         banterRoomList.setAdapter(banterMenuListAdapter);
         // testing
 
@@ -57,9 +56,8 @@ public class BanterMenuFragment extends Fragment {
     public View getBanterMenuFragment(){
         return banterMenuFragment;
     }
-
-    public void addBanterRoomToList(BanterRoom banterRoom){
-        banterRooms.add(banterRoom);
-        banterMenuListAdapter.notifyDataSetChanged();
+    public BanterMenuListAdapter getBanterMenuListAdapter(){
+        return banterMenuListAdapter;
     }
+
 }

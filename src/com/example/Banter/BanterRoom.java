@@ -1,5 +1,6 @@
 package com.example.Banter;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,7 +8,7 @@ import java.util.Date;
 /**
  * Created by Erlend on 17.10.2014.
  */
-public class BanterRoom {
+public class BanterRoom implements Serializable {
 
     private int id;
     private String name;
@@ -15,6 +16,8 @@ public class BanterRoom {
     private String lastUpdated;
     private String likes;
     private ArrayList<BanterPost> posts;
+    private String password;
+    private String adminPassword;
 
     public BanterRoom(String name) {
         this.name = name;
@@ -27,7 +30,18 @@ public class BanterRoom {
         likes = Integer.toString(15);
         posts = new ArrayList<BanterPost>();
     }
-
+    public String getPassword(){
+        return password;
+    }
+    public void setPassword(String password){
+        this.password=password;
+    }
+    public String getAdminassword(){
+        return adminPassword;
+    }
+    public void setAdminpassword(String password){
+        this.adminPassword = password;
+    }
     public void addPost(BanterPost post) {
         posts.add(post);
     }
@@ -60,9 +74,8 @@ public class BanterRoom {
         this.name = name;
     }
 
-    public void setLastUpdated(Date updated){
-        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        lastUpdated = sdfDate.format(updated);
+    public void setLastUpdated(String date){
+        lastUpdated = date;
     }
     public String getLastUpdated(){
         return lastUpdated;

@@ -3,6 +3,8 @@ package com.example.Banter;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -17,6 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +30,8 @@ import java.util.List;
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
     int currentFragment = -1;
+    boolean networkAvailable;
+
     BanterMenuFragment banterMenuFragment;
     BanterRoomFragment banterRoomFragment;
     FragmentTransaction fragmentTransaction;
@@ -38,6 +46,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     ImageButton dialogYes;
     ImageButton dialogNo;
 
+
     ProgressDialog progressDialog;
     JSONParser jsonParser = new JSONParser();
     static String URL_GET_ALL_ROOMS = "http://vie.nu/banter/getAllRooms.php";
@@ -45,9 +54,17 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     private static final String TAG_ROOMS= "rooms";
     private static final String TAG_ID = "id";
     private static final String TAG_NAME = "name";
+    private static final String TAG_PASSWORD = "password";
+    private static final String TAG_ADMINPASSWORD = "admin_password";
+    private static final String TAG_DATE_CREATED = "date_created";
+    private static final String TAG_LAST_UPDATED = "last_updated";
+    private static final String TAG_LIKES = "likes";
+
+
+
+
+
     JSONArray rooms = null;
-
-
 
 
     @Override
@@ -55,9 +72,15 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         super.onCreate(savedInstanceState);
         banterDataModel = new BanterDataModel();
         fragmentManager = getFragmentManager();
+        loadBanterDataModel();
+        Log.e("@@@@@@@@@@@@@@@","" + banterDataModel.banterRooms.size());
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
-        new LoadRooms().execute();
+        networkAvailable = isNetworkAvailable();
+
+        if(networkAvailable) {
+            new LoadRooms().execute();
+        }
         transact(banterMenuFragment);
 
     }
@@ -94,6 +117,36 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     public void transactToRoomFragment() {
         transact(banterRoomFragment);
     }
+
+    private void saveBanterDataModel(){
+        try {
+            FileOutputStream fileOutputStream = openFileOutput("BanterDataModel", Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(banterDataModel);
+            objectOutputStream.close();
+            Log.e("SAVING",""+banterDataModel.banterRooms.size());
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private void loadBanterDataModel(){
+        try {
+            FileInputStream fileInputStream = new FileInputStream(getFilesDir().getAbsolutePath() + "/BanterDataModel");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            banterDataModel = (BanterDataModel)objectInputStream.readObject();
+            objectInputStream.close();
+            Log.e("LOADING",""+banterDataModel.banterRooms.size());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        saveBanterDataModel();
+    }
+
     @Override
     public void onBackPressed() {
         currentFragment--;
@@ -121,7 +174,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                 /* FOR TESTING ONLY */
                 try {
                     BanterRoom banterRoom = new BanterRoom(dialogRoomName.getText().toString());
-                    banterMenuFragment.addBanterRoomToList(banterRoom);
+                    banterDataModel.addBanterRoom(banterRoom);
                     dialog.dismiss();
                 } catch (Exception e){
                     e.printStackTrace();
@@ -149,7 +202,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     }
 
     /* Class handles the loading of the rooms that a user has access to */
-    class LoadRooms extends AsyncTask<String,String, String> {
+    class LoadRooms extends AsyncTask<String,String,String> {
 
         @Override
         protected void onPreExecute(){
@@ -168,11 +221,19 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                 int success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                     rooms = json.getJSONArray(TAG_ROOMS);
-                    Log.e("@@@@@@@@@@@@@", " " +rooms.length());
                     for (int i = 0; i < rooms.length(); i++) {
                         JSONObject c = rooms.getJSONObject(i);
                         String name = c.getString(TAG_NAME);
+                        BanterRoom banterRoom = new BanterRoom(c.getString(TAG_NAME));
+                        banterRoom.setId(c.getInt(TAG_ID));
+                        banterRoom.setAdminpassword(c.getString(TAG_ADMINPASSWORD));
+                        banterRoom.setDateCreated(c.getString(TAG_DATE_CREATED));
+                        banterRoom.setLastUpdated(c.getString(TAG_LAST_UPDATED));
+                        banterRoom.setLikes(c.getInt(TAG_LIKES));
+                        banterRoom.setPassword(c.getString(TAG_PASSWORD));
                         banterDataModel.addBanterRoom(new BanterRoom(name));
+                        Log.e("@@@@@@@@@@@@@@@","" + banterDataModel.banterRooms.size());
+
                     }
                 }
             } catch (JSONException e) {
@@ -183,16 +244,15 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         @Override
         protected void onPostExecute(String file_url) {
             progressDialog.dismiss();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    for(BanterRoom banterRoom : banterDataModel.getBanterRooms()){
-                        banterMenuFragment.addBanterRoomToList(banterRoom);
-                    }
-                }
-            });
+            banterMenuFragment.getBanterMenuListAdapter().notifyDataSetChanged();
         }
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 

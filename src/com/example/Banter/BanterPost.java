@@ -2,17 +2,18 @@ package com.example.Banter;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by Erlend on 17.10.2014.
  */
-public class BanterPost {
+public class BanterPost implements Serializable {
 
     private String name;
     private String text;
-    private Bitmap image;
+    private SerializableBitmap image;
     private String time;
     private int likes;
 
@@ -29,6 +30,7 @@ public class BanterPost {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         time = sdfDate.format(now);
+        image = new SerializableBitmap(null);
     }
 
     public void incrementLikes() {
@@ -56,11 +58,11 @@ public class BanterPost {
     }
 
     public Bitmap getImage() {
-        return image;
+        return image.picture;
     }
 
     public void setImage(Bitmap image) {
-        this.image = image;
+        this.image = new SerializableBitmap(image);
     }
 
     public String getTime() {
