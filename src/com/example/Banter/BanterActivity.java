@@ -148,14 +148,14 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
 
     }
 
-
+    /* Class handles the loading of the rooms that a user has access to */
     class LoadRooms extends AsyncTask<String,String, String> {
 
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
             progressDialog = new ProgressDialog(BanterActivity.this);
-            progressDialog.setMessage("Loading rooms, please wait");
+            progressDialog.setMessage("Loading rooms...");
             progressDialog.setIndeterminate(false);
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -167,20 +167,20 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             try{
                 int success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                        rooms = json.getJSONArray(TAG_ROOMS);
-                        Log.e("@@@@@@@@@@@@@", " " +rooms.length());
-                        for (int i = 0; i < rooms.length(); i++) {
-                            JSONObject c = rooms.getJSONObject(i);
-                            String name = c.getString(TAG_NAME);
-                            banterDataModel.addBanterRoom(new BanterRoom(name));
-                        }
+                    rooms = json.getJSONArray(TAG_ROOMS);
+                    Log.e("@@@@@@@@@@@@@", " " +rooms.length());
+                    for (int i = 0; i < rooms.length(); i++) {
+                        JSONObject c = rooms.getJSONObject(i);
+                        String name = c.getString(TAG_NAME);
+                        banterDataModel.addBanterRoom(new BanterRoom(name));
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-
-                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            return null;
+        }
+        @Override
         protected void onPostExecute(String file_url) {
             progressDialog.dismiss();
             runOnUiThread(new Runnable() {
