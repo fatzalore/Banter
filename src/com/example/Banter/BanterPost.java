@@ -15,9 +15,10 @@ public class BanterPost {
     private Bitmap image;
     private String time;
     private int likes;
+    private boolean liked;
 
     public BanterPost() {
-
+        liked = false;
     }
 
     /**
@@ -29,6 +30,14 @@ public class BanterPost {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         time = sdfDate.format(now);
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
     }
 
     public void incrementLikes() {
