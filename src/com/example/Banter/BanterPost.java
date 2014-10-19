@@ -16,9 +16,10 @@ public class BanterPost implements Serializable {
     private SerializableBitmap image;
     private String time;
     private int likes;
+    private boolean liked;
 
     public BanterPost() {
-
+        liked = false;
     }
 
     /**
@@ -31,6 +32,14 @@ public class BanterPost implements Serializable {
         Date now = new Date();
         time = sdfDate.format(now);
         image = new SerializableBitmap(null);
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
     }
 
     public void incrementLikes() {
