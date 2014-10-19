@@ -38,7 +38,7 @@
             android:layout_alignParentLeft="true"
             android:textSize="14sp"
             android:paddingLeft="6dp"
-            />
+            android:singleLine="false"/>
 
     <TextView
             android:id="@+id/room_chat_list_time"

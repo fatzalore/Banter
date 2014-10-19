@@ -3,16 +3,23 @@ package com.example.Banter;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.SearchView;
+import android.widget.*;
+import org.apache.http.NameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
@@ -21,6 +28,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     BanterRoomFragment banterRoomFragment;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
+    BanterDataModel banterDataModel;
 
     EditText dialogRoomName;
     EditText dialogPassword;
@@ -30,14 +38,26 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     ImageButton dialogYes;
     ImageButton dialogNo;
 
+    ProgressDialog progressDialog;
+    JSONParser jsonParser = new JSONParser();
+    static String URL_GET_ALL_ROOMS = "http://vie.nu/banter/getAllRooms.php";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_ROOMS= "rooms";
+    private static final String TAG_ID = "id";
+    private static final String TAG_NAME = "name";
+    JSONArray rooms = null;
+
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        banterDataModel = new BanterDataModel();
         fragmentManager = getFragmentManager();
-
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
+        new LoadRooms().execute();
         transact(banterMenuFragment);
 
     }
@@ -127,4 +147,53 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         }
 
     }
+
+
+    class LoadRooms extends AsyncTask<String,String, String> {
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(BanterActivity.this);
+            progressDialog.setMessage("Loading rooms, please wait");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+        @Override
+        protected String doInBackground(String... args) {
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            JSONObject json = jsonParser.makeHttpRequest(URL_GET_ALL_ROOMS,"GET",params);
+            try{
+                int success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                        rooms = json.getJSONArray(TAG_ROOMS);
+                        Log.e("@@@@@@@@@@@@@", " " +rooms.length());
+                        for (int i = 0; i < rooms.length(); i++) {
+                            JSONObject c = rooms.getJSONObject(i);
+                            String name = c.getString(TAG_NAME);
+                            banterDataModel.addBanterRoom(new BanterRoom(name));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+        protected void onPostExecute(String file_url) {
+            progressDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for(BanterRoom banterRoom : banterDataModel.getBanterRooms()){
+                        banterMenuFragment.addBanterRoomToList(banterRoom);
+                    }
+                }
+            });
+        }
+
+    }
 }
+
+
