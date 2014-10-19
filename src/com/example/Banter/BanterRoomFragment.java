@@ -211,4 +211,6 @@ public class BanterRoomFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.banter_room_actionbar,menu);
     }
+
+
 }
