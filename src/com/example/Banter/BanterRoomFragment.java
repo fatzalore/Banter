@@ -113,13 +113,13 @@ public class BanterRoomFragment extends Fragment {
                     /* ok, we are ready to post */
                     final EditText userTextView = new EditText(getActivity());
                     new AlertDialog.Builder(getActivity())
-                            .setTitle("Yes, more banter!")
+                            .setTitle("Written by?")
                             .setView(userTextView)
                             .setPositiveButton("Post", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     /* save post! */
-                                    if (userTextView.getText().toString() == null ||  userTextView.getText().toString() == "")
+                                    if (userTextView.getText().length() < 1)
                                         currentPost.setName("Anonymous");
                                     else
                                         currentPost.setName(userTextView.getText().toString());
