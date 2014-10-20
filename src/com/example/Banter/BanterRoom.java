@@ -11,10 +11,10 @@ import java.util.Date;
 public class BanterRoom implements Serializable {
 
     private int id;
+    private int amount;
     private String name;
     private String dateCreated;
     private String lastUpdated;
-    private String likes;
     private ArrayList<BanterPost> posts;
     private String password;
     private String adminPassword;
@@ -27,8 +27,8 @@ public class BanterRoom implements Serializable {
         Date now = new Date();
         dateCreated = sdfDate.format(now);
         lastUpdated = dateCreated;
-        likes = Integer.toString(15);
         posts = new ArrayList<BanterPost>();
+        amount = 0;
     }
     public String getPassword(){
         return password;
@@ -43,6 +43,7 @@ public class BanterRoom implements Serializable {
         this.adminPassword = password;
     }
     public void addPost(BanterPost post) {
+        amount++;
         posts.add(post);
     }
 
@@ -80,10 +81,10 @@ public class BanterRoom implements Serializable {
     public String getLastUpdated(){
         return lastUpdated;
     }
-    public void setLikes(int likes){
-        this.likes = Integer.toString(likes);
+    public void setPostAmount(int posts){
+        this.amount=posts;
     }
-    public String getLikes(){
-        return likes;
+    public int getPostAmount(){
+        return amount;
     }
 }

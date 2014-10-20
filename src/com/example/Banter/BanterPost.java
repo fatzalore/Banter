@@ -31,7 +31,6 @@ public class BanterPost implements Serializable {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         time = sdfDate.format(now);
-        image = new SerializableBitmap(null);
     }
 
     public boolean isLiked() {
