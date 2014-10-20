@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import org.apache.http.NameValuePair;
@@ -139,9 +140,13 @@ public class BanterRoomFragment extends Fragment {
                                     else
                                         currentPost.setName(userTextView.getText().toString());
 
-                                    /* TODO: update database */
-
-
+                                    /* send to db */
+                                    if (banterActivity.isNetworkAvailable) {
+                                        new CreatePost().execute();
+                                    }
+                                    else {
+                                        // TODO: toast no internet connection..
+                                    }
                                 }
                             })
                             .setNegativeButton("Back", new DialogInterface.OnClickListener() {
@@ -267,14 +272,14 @@ public class BanterRoomFragment extends Fragment {
         }
     }
 
-    /* Class handles the loading of the rooms that a user has access to */
-    class CreateRooms extends AsyncTask<String,String,String> {
+    /* Class handles the submition of new post */
+    class CreatePost extends AsyncTask<String,String,String> {
 
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            banterActivity.progressDialog = new ProgressDialog(banterActivity.getBaseContext());
-            banterActivity.progressDialog.setMessage("Creating Room...");
+            banterActivity.progressDialog = new ProgressDialog(banterActivity);
+            banterActivity.progressDialog.setMessage("Submitting post...");
             banterActivity.progressDialog.setIndeterminate(false);
             banterActivity.progressDialog.setCancelable(false);
             banterActivity.progressDialog.show();
@@ -290,10 +295,10 @@ public class BanterRoomFragment extends Fragment {
             JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_POST,"POST",params);
 
             try{
+                Log.v("", jsonObject.getString("message"));
                 int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
                 if(success == 1){
                     banterActivity.banterDataModel.currentRoom.addPost(currentPost);
-                    //new LoadRooms().execute();
                 }
             } catch (Exception e){
                 e.printStackTrace();
@@ -305,7 +310,6 @@ public class BanterRoomFragment extends Fragment {
         protected void onPostExecute(String file_url) {
             banterActivity.progressDialog.dismiss();
 
-            banterActivity.banterDataModel.currentRoom.addPost(currentPost);
             currentPost = new BanterPost();
 
             /* refresh ui */
