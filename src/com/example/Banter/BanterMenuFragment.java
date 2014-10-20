@@ -244,8 +244,8 @@ public class BanterMenuFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(!banterActivity.banterDataModel.isBanterRoomInList(searchResultArray.get(position))){
                     // TODO FIX AUTHENTICATION
-                    hasUserAccsess(position);
-                    if(authorized) {
+
+                    if(passwordDialogInput.getText().toString().equals(searchResultArray.get(position).getPassword())){
                         Log.e("@@@@@@@@@@@@@@","WE ARE ADDING");
                         banterActivity.banterDataModel.banterRooms.add(searchResultArray.get(position));
                         getBanterMenuListAdapter().notifyDataSetChanged();
