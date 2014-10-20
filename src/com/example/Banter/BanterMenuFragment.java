@@ -285,4 +285,5 @@ public class BanterMenuFragment extends Fragment {
                     }
                 }).show();
     }
+
 }
