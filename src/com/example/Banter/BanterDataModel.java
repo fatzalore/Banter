@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class BanterDataModel implements Serializable {
 
     static public ArrayList<BanterRoom> banterRooms;
+    public BanterRoom currentRoom;
 
 
     public BanterDataModel(){

@@ -31,17 +31,15 @@ public class BanterRoomFragment extends Fragment {
 
     BanterRoomListAdapter banterRoomListAdapter;
 
-    BanterPost currentPost; // This is the post that is currently written by user. When user press submit, the info (image etc.) will be retrieved from this obj.
-    BanterRoom currentRoom; // room object of current room.
+    BanterPost currentPost = new BanterPost(); // This is the post that is currently written by user. When user press submit, the info (image etc.) will be retrieved from this obj.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         setHasOptionsMenu(true);
+        BanterActivity banterActivity = (BanterActivity) getActivity();
         getActivity().setContentView(R.layout.banter_room_layout);
         banterRoomFragment = inflater.inflate(R.layout.banter_room_layout,container,false);
         banterRoomList = (ListView) banterRoomFragment.findViewById(R.id.room_chat_list);
-
-        currentPost = new BanterPost();
 
         /* get the views from layout */
         cameraButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_camera_button);
@@ -61,10 +59,11 @@ public class BanterRoomFragment extends Fragment {
 
         /* get data */
         addTestData();
-
-        banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), currentRoom.getPosts());
-        banterRoomList.setAdapter(banterRoomListAdapter);
         /* TEST DATA end */
+
+        banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), );
+        banterRoomList.setAdapter(banterRoomListAdapter);
+
 
         return banterRoomFragment;
     }
