@@ -5,10 +5,15 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.*;
 import android.widget.*;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -28,6 +33,10 @@ public class BanterRoomFragment extends Fragment {
     ImageButton submitPostButton;
     EditText newPostText;
     ImageView newPostImage;
+
+    JSONArray posts = null;
+    JSONParser jsonParser = new JSONParser();
+
 
     BanterRoomListAdapter banterRoomListAdapter;
 
@@ -50,7 +59,7 @@ public class BanterRoomFragment extends Fragment {
         submitPostButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_submit_button);
         newPostText = (EditText) banterRoomFragment.findViewById(R.id.room_post_text);
         newPostImage = (ImageView) banterRoomFragment.findViewById(R.id.room_post_camera_temp);
-
+        
         /* bottom buttons listeners */
         addCameraListener();
         //addAttachImageListener();
@@ -208,9 +217,57 @@ public class BanterRoomFragment extends Fragment {
     /* Set the custom action bar to the menu fragment */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.banter_room_actionbar,menu);
+    }
+    public BanterRoomListAdapter getBanterRoomListAdapter(){
+        return banterRoomListAdapter;
+    }
+
+
+    /* Class handles the loading of the posts of a room that a user has access to */
+    class PostPolling extends AsyncTask<String,String,String> {
+
+        @Override
+        protected String doInBackground(String... args) {
+            BanterRoom current = banterActivity.getBanterDataModel().currentRoom;
+            BanterPost last = current.getPosts().get(current.getPosts().size()-1);
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID,Integer.toString(current.getId())));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(last.getId())));
+            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_POSTS,"GET",params);
+            try{
+                int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
+                if (success == 1) {
+                    posts = json.getJSONArray(BanterSQLContract.TAG_POSTS);
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject c = posts.getJSONObject(i);
+
+                        BanterPost banterPost = new BanterPost();
+                        banterPost.setId(c.getInt(BanterSQLContract.TAG_POST_ID));
+                        banterPost.setName(c.getString(BanterSQLContract.TAG_NAME));
+                        banterPost.setLikes(c.getInt(BanterSQLContract.TAG_LIKES));
+                        banterPost.setText(c.getString(BanterSQLContract.TAG_TEXT));
+                        banterPost.setTime(c.getString(BanterSQLContract.TAG_TIME));
+
+                        banterActivity.getBanterDataModel().currentRoom.addPost(banterPost);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String file_url) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getBanterRoomListAdapter().notifyDataSetChanged();
+                }
+            });
+        }
     }
 
 

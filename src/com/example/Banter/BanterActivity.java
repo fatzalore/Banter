@@ -49,20 +49,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     Timer timer;
 
     ProgressDialog progressDialog;
-    JSONParser jsonParser = new JSONParser();
-    static String URL_GET_ALL_ROOMS = "http://vie.nu/banter/getAllRooms.php";
-    static String URL_CREATE_NEW_ROOM = "http://vie.nu/banter/addRoom.php";
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_ROOMS= "rooms";
-    private static final String TAG_ID = "id";
-    private static final String TAG_NAME = "name";
-    private static final String TAG_PASSWORD = "password";
-    private static final String TAG_ADMINPASSWORD = "admin_password";
-    private static final String TAG_DATE_CREATED = "date_created";
-    private static final String TAG_LAST_UPDATED = "last_updated";
-    private static final String TAG_POSTS = "posts";
-    private static final String FILE_PATH = "banter.dat";
-
     JSONArray rooms = null;
 
 
@@ -82,6 +68,9 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
 
         transact(banterMenuFragment);
 
+    }
+    public BanterDataModel getBanterDataModel(){
+        return banterDataModel;
     }
 
     @Override
@@ -235,26 +224,26 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         @Override
         protected String doInBackground(String... args) {
             ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            JSONObject json = jsonParser.makeHttpRequest(URL_GET_ALL_ROOMS,"GET",params);
+            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_ALL_ROOMS,"GET",params);
             try{
-                int success = json.getInt(TAG_SUCCESS);
+                int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
                 if (success == 1) {
-                    rooms = json.getJSONArray(TAG_ROOMS);
+                    rooms = json.getJSONArray(BanterSQLContract.TAG_ROOMS);
                     for (int i = 0; i < rooms.length(); i++) {
                         JSONObject c = rooms.getJSONObject(i);
 
-                        BanterRoom b = new BanterRoom(c.getString(TAG_NAME));
-                        b.setId(c.getInt(TAG_ID));
+                        BanterRoom b = new BanterRoom(c.getString(BanterSQLContract.TAG_NAME));
+                        b.setId(c.getInt(BanterSQLContract.TAG_ID));
 
                         for(BanterRoom banterRoom : banterDataModel.banterRooms){
                             if(banterRoom.equals(b)){
-                                banterRoom.setName(c.getString(TAG_NAME));
-                                banterRoom.setId(c.getInt(TAG_ID));
-                                banterRoom.setAdminpassword(c.getString(TAG_ADMINPASSWORD));
-                                banterRoom.setDateCreated(c.getString(TAG_DATE_CREATED));
-                                banterRoom.setLastUpdated(c.getString(TAG_LAST_UPDATED));
-                                banterRoom.setPostAmount(c.getInt(TAG_POSTS));
-                                banterRoom.setPassword(c.getString(TAG_PASSWORD));
+                                banterRoom.setName(c.getString(BanterSQLContract.TAG_NAME));
+                                banterRoom.setId(c.getInt(BanterSQLContract.TAG_ID));
+                                banterRoom.setAdminpassword(c.getString(BanterSQLContract.TAG_ADMINPASSWORD));
+                                banterRoom.setDateCreated(c.getString(BanterSQLContract.TAG_DATE_CREATED));
+                                banterRoom.setLastUpdated(c.getString(BanterSQLContract.TAG_LAST_UPDATED));
+                                banterRoom.setPostAmount(c.getInt(BanterSQLContract.TAG_POSTS));
+                                banterRoom.setPassword(c.getString(BanterSQLContract.TAG_PASSWORD));
                             }
                         }
                     }
@@ -294,14 +283,14 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             String dateCreated = sdfDate.format(now);
 
             ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair(TAG_NAME,name));
-            params.add(new BasicNameValuePair(TAG_PASSWORD,password));
-            params.add(new BasicNameValuePair(TAG_ADMINPASSWORD,adminPassword));
-            params.add(new BasicNameValuePair(TAG_DATE_CREATED, dateCreated));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(URL_CREATE_NEW_ROOM,"POST",params);
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_NAME,name));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_PASSWORD,password));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ADMINPASSWORD,adminPassword));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_DATE_CREATED, dateCreated));
+            JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_ROOM,"POST",params);
 
             try{
-                int success = jsonObject.getInt(TAG_SUCCESS);
+                int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
                 if(success == 1){
                     //new LoadRooms().execute();
                 }
