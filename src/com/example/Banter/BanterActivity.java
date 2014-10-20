@@ -95,6 +95,24 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                 toggleSearchField();
                 break;
             case R.id.options:
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(this, findViewById(R.id.options));
+                //Inflating the Popup using xml file
+                popup.getMenuInflater()
+                        .inflate(R.menu.banter_popup_menu, popup.getMenu());
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(
+                                getBaseContext(),
+                                "You Clicked : " + item.getTitle(),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return true;
+                    }
+                });
+                popup.show(); //showing popup menu
                 break;
         }
         return super.onOptionsItemSelected(menuItem);

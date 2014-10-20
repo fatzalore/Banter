@@ -5,7 +5,8 @@
           android:versionName="1.0">
     <uses-sdk android:minSdkVersion="17"/>
     <application android:label="@string/app_name"
-                 android:icon="@drawable/banter_logo_v1"
+                 android:icon="@drawable/banter_logo2"
+                 android:logo="@drawable/banter_logo_actionbar"
                  android:theme="@style/Theme.Banter">
         <activity android:name="BanterActivity"
                   android:windowSoftInputMode="adjustPan"

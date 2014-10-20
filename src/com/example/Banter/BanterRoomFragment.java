@@ -318,6 +318,4 @@ public class BanterRoomFragment extends Fragment {
         }
 
     }
-
-
 }
