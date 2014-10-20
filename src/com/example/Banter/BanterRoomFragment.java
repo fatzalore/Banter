@@ -2,11 +2,9 @@ package com.example.Banter;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.*;
@@ -15,9 +13,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by jacobmeidell on 17.10.14.
@@ -132,12 +128,14 @@ public class BanterRoomFragment extends Fragment {
                                     else
                                         currentPost.setName(userTextView.getText().toString());
 
+                                    banterActivity.banterDataModel.currentRoom.addPost(currentPost);
+                                    currentPost = new BanterPost();
+
                                     /* Remove old data */
                                     newPostImage.setVisibility(View.GONE);
                                     newPostText.setText("");
 
                                     /* TODO: update database */
-
 
                                     /* refresh ui */
                                     banterRoomListAdapter.notifyDataSetChanged();
@@ -218,46 +216,5 @@ public class BanterRoomFragment extends Fragment {
         inflater.inflate(R.menu.banter_room_actionbar,menu);
     }
 
-    /* Class handles the submitting of the posts that a user has access to */
-    class CreateRooms extends AsyncTask<String,String,String> {
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            banterActivity.progressDialog = new ProgressDialog(banterActivity.getBaseContext());
-            banterActivity.progressDialog.setMessage("Submitting post...");
-            banterActivity.progressDialog.setIndeterminate(false);
-            banterActivity.progressDialog.setCancelable(false);
-            banterActivity.progressDialog.show();
-        }
-        @Override
-        protected String doInBackground(String... args) {
-
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair(banterActivity.TAG_NAME,));
-            params.add(new BasicNameValuePair(TAG_PASSWORD,password));
-            params.add(new BasicNameValuePair(TAG_ADMINPASSWORD,adminPassword));
-            params.add(new BasicNameValuePair(TAG_DATE_CREATED, dateCreated));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(URL_CREATE_NEW_ROOM,"POST",params);
-
-            try{
-                int success = jsonObject.getInt(TAG_SUCCESS);
-                if(success == 1){
-                    banterActivity.banterDataModel.currentRoom.addPost(currentPost);
-                    currentPost = new BanterPost();
-                    //new LoadRooms().execute();
-                }
-            } catch (Exception e){
-                e.printStackTrace();
-                /* TODO: tell user submition failed */
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String file_url) {
-            banterActivity.progressDialog.dismiss();
-        }
-
-    }
 
 }
