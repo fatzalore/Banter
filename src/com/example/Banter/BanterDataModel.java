@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class BanterDataModel implements Serializable {
 
     public ArrayList<BanterRoom> banterRooms;
+    public BanterRoom currentRoom; // current room is what is currently polled info from and displayed in roomFragment
 
 
     public BanterDataModel(){

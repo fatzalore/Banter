@@ -33,10 +33,12 @@ public class BanterRoomFragment extends Fragment {
 
     BanterPost currentPost = new BanterPost(); // This is the post that is currently written by user. When user press submit, the info (image etc.) will be retrieved from this obj.
 
+    BanterActivity banterActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         setHasOptionsMenu(true);
-        BanterActivity banterActivity = (BanterActivity) getActivity();
+        banterActivity = (BanterActivity) getActivity();
         getActivity().setContentView(R.layout.banter_room_layout);
         banterRoomFragment = inflater.inflate(R.layout.banter_room_layout,container,false);
         banterRoomList = (ListView) banterRoomFragment.findViewById(R.id.room_chat_list);
@@ -58,10 +60,10 @@ public class BanterRoomFragment extends Fragment {
         addOnHoldCameraTempImageListener();
 
         /* get data */
-        addTestData();
+        // addTestData();
         /* TEST DATA end */
 
-        banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), );
+        banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), banterActivity.banterDataModel.currentRoom.getPosts());
         banterRoomList.setAdapter(banterRoomListAdapter);
 
 
@@ -70,7 +72,7 @@ public class BanterRoomFragment extends Fragment {
 
     private void addTestData() {
          /* TEST DATA! */
-        currentRoom = new BanterRoom("test room");
+        banterActivity.banterDataModel.currentRoom = new BanterRoom("test room");
         BanterPost testPost1 = new BanterPost();
         testPost1.setName("Ali baba");
         testPost1.setLikes(9);
@@ -81,8 +83,8 @@ public class BanterRoomFragment extends Fragment {
         testPost2.setLikes(-11);
         testPost2.setTimeAndDateToNow();
         testPost2.setText("Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis");
-        currentRoom.addPost(testPost1);
-        currentRoom.addPost(testPost2);
+        banterActivity.banterDataModel.currentRoom.addPost(testPost1);
+        banterActivity.banterDataModel.currentRoom.addPost(testPost2);
         /* TEST DATA end*/
     }
 
@@ -123,7 +125,7 @@ public class BanterRoomFragment extends Fragment {
                                     else
                                         currentPost.setName(userTextView.getText().toString());
 
-                                    currentRoom.addPost(currentPost);
+                                    banterActivity.banterDataModel.currentRoom.addPost(currentPost);
                                     currentPost = new BanterPost();
 
                                     /* Remove old data */

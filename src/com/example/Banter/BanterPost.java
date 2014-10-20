@@ -11,6 +11,7 @@ import java.util.Date;
  */
 public class BanterPost implements Serializable {
 
+    private int id;
     private String name;
     private String text;
     private SerializableBitmap image;
@@ -31,6 +32,14 @@ public class BanterPost implements Serializable {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         time = sdfDate.format(now);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean isLiked() {
