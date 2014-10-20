@@ -87,7 +87,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                 }
                 break;
             case R.id.search:
-                toggleSearchField();
+                toggleSearchDialog();
                 break;
             case R.id.options:
                 //Creating the instance of PopupMenu
@@ -213,14 +213,13 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         dialog.show();
     }
 
-    private void toggleSearchField(){
-        EditText searchField = (EditText) banterMenuFragment.getBanterMenuFragment().findViewById(R.id.menu_search_field);
-        if(searchField.getVisibility() == View.VISIBLE){
-            searchField.setVisibility(View.GONE);
+    private void toggleSearchDialog(){
+        if(banterMenuFragment.dialog == null){
+            banterMenuFragment.createSearchDialog();
         } else {
-            searchField.setVisibility(View.VISIBLE);
+            banterMenuFragment.dialog.dismiss();
+            banterMenuFragment.dialog = null;
         }
-
     }
 
     private boolean isNetworkAvailable() {

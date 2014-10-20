@@ -20,6 +20,15 @@ public class BanterDataModel implements Serializable {
         return banterRooms;
     }
 
+    public boolean isBanterRoomInList(BanterRoom banterRoom){
+        for(BanterRoom b : banterRooms){
+            if(banterRoom.equals(b)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addBanterRoom(BanterRoom banterRoom){
         banterRooms.add(banterRoom);
     }
