@@ -62,4 +62,6 @@ public class BanterMenuFragment extends Fragment {
         return banterMenuListAdapter;
     }
 
+
+
 }
