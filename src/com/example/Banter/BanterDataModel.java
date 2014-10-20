@@ -8,19 +8,18 @@ import java.util.ArrayList;
  */
 public class BanterDataModel implements Serializable {
 
-    static public ArrayList<BanterRoom> banterRooms;
-    public BanterRoom currentRoom;
+    public ArrayList<BanterRoom> banterRooms;
 
 
     public BanterDataModel(){
         banterRooms = new ArrayList<BanterRoom>();
     }
 
-    public static ArrayList<BanterRoom> getBanterRooms() {
+    public ArrayList<BanterRoom> getBanterRooms() {
         return banterRooms;
     }
 
-    public static void addBanterRoom(BanterRoom banterRoom){
+    public void addBanterRoom(BanterRoom banterRoom){
         banterRooms.add(banterRoom);
     }
 }

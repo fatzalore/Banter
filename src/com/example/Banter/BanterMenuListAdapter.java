@@ -47,7 +47,7 @@ public class BanterMenuListAdapter extends ArrayAdapter<BanterRoom> {
         }
         viewHolderItem.groupName.setText(banterRoom.getName());
         viewHolderItem.lastUpdated.setText(banterRoom.getLastUpdated());
-        viewHolderItem.posts.setText(banterRoom.getLikes());
+        viewHolderItem.posts.setText(Integer.toString(banterRoom.getPostAmount()));
         return convertView;
     }
 }

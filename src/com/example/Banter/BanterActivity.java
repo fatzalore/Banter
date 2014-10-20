@@ -30,7 +30,7 @@ import java.util.List;
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
     int currentFragment = -1;
-    boolean networkAvailable;
+    boolean isNetworkAvailable;
 
     BanterMenuFragment banterMenuFragment;
     BanterRoomFragment banterRoomFragment;
@@ -58,11 +58,8 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     private static final String TAG_ADMINPASSWORD = "admin_password";
     private static final String TAG_DATE_CREATED = "date_created";
     private static final String TAG_LAST_UPDATED = "last_updated";
-    private static final String TAG_LIKES = "likes";
-
-
-
-
+    private static final String TAG_POSTS = "posts";
+    private static final String FILE_PATH = "banter.dat";
 
     JSONArray rooms = null;
 
@@ -76,9 +73,9 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         Log.e("@@@@@@@@@@@@@@@","" + banterDataModel.banterRooms.size());
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
-        networkAvailable = isNetworkAvailable();
+        isNetworkAvailable = isNetworkAvailable();
 
-        if(networkAvailable) {
+        if(isNetworkAvailable) {
             new LoadRooms().execute();
         }
         transact(banterMenuFragment);
@@ -95,7 +92,11 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     public boolean onOptionsItemSelected(MenuItem menuItem){
         switch(menuItem.getItemId()){
             case R.id.add:
-                createNewRoomDialog();
+                if(isNetworkAvailable){
+                    createNewRoomDialog();
+                } else {
+                    Toast.makeText(this,"Sorry, you are not connected to the internet",Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.search:
                 toggleSearchField();
@@ -120,7 +121,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
 
     private void saveBanterDataModel(){
         try {
-            FileOutputStream fileOutputStream = openFileOutput("BanterDataModel", Context.MODE_PRIVATE);
+            FileOutputStream fileOutputStream = getBaseContext().openFileOutput("banter", Context.MODE_PRIVATE);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(banterDataModel);
             objectOutputStream.close();
@@ -132,7 +133,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     }
     private void loadBanterDataModel(){
         try {
-            FileInputStream fileInputStream = new FileInputStream(getFilesDir().getAbsolutePath() + "/BanterDataModel");
+            FileInputStream fileInputStream = new FileInputStream(getBaseContext().getFilesDir().getAbsolutePath() + "/banter");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             banterDataModel = (BanterDataModel)objectInputStream.readObject();
             objectInputStream.close();
@@ -223,20 +224,18 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                     rooms = json.getJSONArray(TAG_ROOMS);
                     for (int i = 0; i < rooms.length(); i++) {
                         JSONObject c = rooms.getJSONObject(i);
-                        String name = c.getString(TAG_NAME);
                         BanterRoom banterRoom = new BanterRoom(c.getString(TAG_NAME));
                         banterRoom.setId(c.getInt(TAG_ID));
                         banterRoom.setAdminpassword(c.getString(TAG_ADMINPASSWORD));
                         banterRoom.setDateCreated(c.getString(TAG_DATE_CREATED));
                         banterRoom.setLastUpdated(c.getString(TAG_LAST_UPDATED));
-                        banterRoom.setLikes(c.getInt(TAG_LIKES));
+                        banterRoom.setPostAmount(c.getInt(TAG_POSTS));
                         banterRoom.setPassword(c.getString(TAG_PASSWORD));
-                        banterDataModel.addBanterRoom(new BanterRoom(name));
+                        banterDataModel.addBanterRoom(banterRoom);
                         Log.e("@@@@@@@@@@@@@@@","" + banterDataModel.banterRooms.size());
-
                     }
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;

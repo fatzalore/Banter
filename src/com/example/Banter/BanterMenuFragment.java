@@ -18,15 +18,17 @@ public class BanterMenuFragment extends Fragment {
     private ListView banterRoomList;
     private BanterMenuListAdapter banterMenuListAdapter;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         setHasOptionsMenu(true);
-        getActivity().setContentView(R.layout.banter_menu_layout);
+        BanterActivity banterActivity = (BanterActivity)getActivity();
+        banterActivity.setContentView(R.layout.banter_menu_layout);
         banterMenuFragment = inflater.inflate(R.layout.banter_menu_layout,container,false);
         banterRoomList = (ListView) banterMenuFragment.findViewById(R.id.banter_room_list);
         // testing
-        banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),BanterDataModel.banterRooms);
+        banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),banterActivity.banterDataModel.getBanterRooms());
         banterRoomList.setAdapter(banterMenuListAdapter);
         // testing
 
