@@ -87,4 +87,11 @@ public class BanterRoom implements Serializable {
     public int getPostAmount(){
         return amount;
     }
+
+    public boolean equals(BanterRoom other){
+        if(this.getId() == other.getId()){
+            return true;
+        }
+        return false;
+    }
 }

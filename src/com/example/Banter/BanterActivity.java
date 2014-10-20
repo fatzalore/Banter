@@ -59,6 +59,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     private static final String TAG_DATE_CREATED = "date_created";
     private static final String TAG_LAST_UPDATED = "last_updated";
     private static final String TAG_POSTS = "posts";
+    private static final String FILE_PATH = "banter.dat";
 
     JSONArray rooms = null;
 
@@ -120,7 +121,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
 
     private void saveBanterDataModel(){
         try {
-            FileOutputStream fileOutputStream = openFileOutput("banter", Context.MODE_PRIVATE);
+            FileOutputStream fileOutputStream = getBaseContext().openFileOutput("banter", Context.MODE_PRIVATE);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(banterDataModel);
             objectOutputStream.close();
@@ -132,7 +133,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     }
     private void loadBanterDataModel(){
         try {
-            FileInputStream fileInputStream = new FileInputStream(getFilesDir().getAbsolutePath() + "/banter");
+            FileInputStream fileInputStream = new FileInputStream(getBaseContext().getFilesDir().getAbsolutePath() + "/banter");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             banterDataModel = (BanterDataModel)objectInputStream.readObject();
             objectInputStream.close();
