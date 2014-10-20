@@ -35,7 +35,6 @@ public class BanterMenuFragment extends Fragment {
     private BanterMenuListAdapter searchDialogAdapter;
     private EditText passwordDialogInput;
     Dialog dialog;
-    boolean authorized;
     private AlertDialog passwordDialog;
 
 
@@ -242,20 +241,11 @@ public class BanterMenuFragment extends Fragment {
         searchRoomDialogList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(!banterActivity.banterDataModel.isBanterRoomInList(searchResultArray.get(position))){
-                    // TODO FIX AUTHENTICATION
-
-                    if(passwordDialogInput.getText().toString().equals(searchResultArray.get(position).getPassword())){
-                        Log.e("@@@@@@@@@@@@@@","WE ARE ADDING");
-                        banterActivity.banterDataModel.banterRooms.add(searchResultArray.get(position));
-                        getBanterMenuListAdapter().notifyDataSetChanged();
-                        authorized = false;
-                    }
-                } else {
-                    Toast.makeText(getActivity(),"Sorry, wrong password", Toast.LENGTH_SHORT).show();
+                if (!banterActivity.banterDataModel.isBanterRoomInList(searchResultArray.get(position))) {
+                    /* prompt a enter password dialog */
+                    hasUserAccsess(position);
                 }
             }
-
         });
         searchRoomDialogSearchField = (EditText) dialog.findViewById(R.id.menu_search_field);
         searchRoomDialogButton = (ImageButton) dialog.findViewById(R.id.menu_search_search);
@@ -273,18 +263,18 @@ public class BanterMenuFragment extends Fragment {
 
     public void hasUserAccsess(final int position){
         passwordDialogInput = new EditText((getActivity()));
-        authorized = false;
         passwordDialog = new AlertDialog.Builder(getActivity())
                 .setTitle("Enter password")
                 .setView(passwordDialogInput)
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Log.e("@@@@@@@@@@@@@@@",passwordDialogInput.getText().toString() +  " " + searchResultArray.get(position).getPassword());
                         if (passwordDialogInput.getText().toString().equals(searchResultArray.get(position).getPassword())) {
-                            Log.e("@@@@@@@@@@@@@@@", "PW AND INPUT IS EQUAL");
-                            authorized = true;
+                            banterActivity.banterDataModel.banterRooms.add(searchResultArray.get(position));
+                            getBanterMenuListAdapter().notifyDataSetChanged();
+                            passwordDialog.dismiss();
+                            dialog.dismiss();
                         } else {
-                            authorized = false;
+                            Toast.makeText(getActivity(),"Sorry, wrong password", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })

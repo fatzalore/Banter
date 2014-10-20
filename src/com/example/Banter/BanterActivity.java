@@ -64,7 +64,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         banterRoomFragment = new BanterRoomFragment();
 
         transact(banterMenuFragment);
-
     }
     public BanterDataModel getBanterDataModel(){
         return banterDataModel;
