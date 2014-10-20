@@ -49,7 +49,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     Timer timer;
 
     ProgressDialog progressDialog;
-    JSONArray rooms = null;
     JSONParser jsonParser = new JSONParser();
 
 
@@ -60,12 +59,12 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         banterDataModel = new BanterDataModel();
         fragmentManager = getFragmentManager();
         loadBanterDataModel();
-        Log.e("@@@@@@@@@@@@@@@", "" + banterDataModel.banterRooms.size());
+        checkNetworkConnection();
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
-        checkNetworkConnection();
+
         if(isNetworkAvailable) {
-            new LoadRooms().execute();
+            banterMenuFragment.loadRooms();
         }
 
         transact(banterMenuFragment);
@@ -181,7 +180,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                     if(validateRoomInput()) {
                         BanterRoom banterRoom = new BanterRoom(dialogRoomName.getText().toString());
                         banterDataModel.addBanterRoom(banterRoom);
-                        new CreateRooms().execute();
+                        banterMenuFragment.createRooms();
                         dialog.dismiss();
                     } else {
                         Toast.makeText(getBaseContext(),"Sorry, some fields are missing and/or passwords don't match",Toast.LENGTH_LONG).show();
@@ -207,103 +206,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             searchField.setVisibility(View.GONE);
         } else {
             searchField.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    /* Class handles the loading of the rooms that a user has access to */
-    class LoadRooms extends AsyncTask<String,String,String> {
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(BanterActivity.this);
-            progressDialog.setMessage("Loading rooms...");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-        @Override
-        protected String doInBackground(String... args) {
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_ALL_ROOMS,"GET",params);
-            try{
-                int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
-                if (success == 1) {
-                    rooms = json.getJSONArray(BanterSQLContract.TAG_ROOMS);
-                    for (int i = 0; i < rooms.length(); i++) {
-                        JSONObject c = rooms.getJSONObject(i);
-
-                        BanterRoom b = new BanterRoom(c.getString(BanterSQLContract.TAG_NAME));
-                        b.setId(c.getInt(BanterSQLContract.TAG_ID));
-
-                        for(BanterRoom banterRoom : banterDataModel.banterRooms){
-                            if(banterRoom.equals(b)){
-                                banterRoom.setName(c.getString(BanterSQLContract.TAG_NAME));
-                                banterRoom.setId(c.getInt(BanterSQLContract.TAG_ID));
-                                banterRoom.setAdminpassword(c.getString(BanterSQLContract.TAG_ADMINPASSWORD));
-                                banterRoom.setDateCreated(c.getString(BanterSQLContract.TAG_DATE_CREATED));
-                                banterRoom.setLastUpdated(c.getString(BanterSQLContract.TAG_LAST_UPDATED));
-                                banterRoom.setPostAmount(c.getInt(BanterSQLContract.TAG_POSTS));
-                                banterRoom.setPassword(c.getString(BanterSQLContract.TAG_PASSWORD));
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String file_url) {
-            progressDialog.dismiss();
-            banterMenuFragment.getBanterMenuListAdapter().notifyDataSetChanged();
-        }
-
-    }
-
-    /* Class handles the loading of the rooms that a user has access to */
-    class CreateRooms extends AsyncTask<String,String,String> {
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(BanterActivity.this);
-            progressDialog.setMessage("Creating Room...");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-        @Override
-        protected String doInBackground(String... args) {
-            String name = dialogRoomName.getText().toString();
-            String password = dialogPassword.getText().toString();
-            String adminPassword = dialogAdminPassword.getText().toString();
-            SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-            Date now = new Date();
-            String dateCreated = sdfDate.format(now);
-
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair(BanterSQLContract.TAG_NAME,name));
-            params.add(new BasicNameValuePair(BanterSQLContract.TAG_PASSWORD,password));
-            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ADMINPASSWORD,adminPassword));
-            params.add(new BasicNameValuePair(BanterSQLContract.TAG_DATE_CREATED, dateCreated));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_ROOM,"POST",params);
-
-            try{
-                int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
-                if(success == 1){
-                    //new LoadRooms().execute();
-                }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String file_url) {
-            progressDialog.dismiss();
         }
 
     }
