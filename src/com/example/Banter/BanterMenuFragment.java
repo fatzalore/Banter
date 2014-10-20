@@ -28,6 +28,7 @@ public class BanterMenuFragment extends Fragment {
     private BanterMenuListAdapter banterMenuListAdapter;
     private BanterActivity banterActivity;
     private JSONArray rooms = null;
+    private JSONObject roomObject = null;
 
 
 
@@ -43,6 +44,10 @@ public class BanterMenuFragment extends Fragment {
         banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),banterActivity.banterDataModel.getBanterRooms());
         banterRoomList.setAdapter(banterMenuListAdapter);
         // testing
+
+        if(banterActivity.isNetworkAvailable) {
+            loadRooms();
+        }
 
         /* Listen for item clicks */
         banterRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,6 +87,7 @@ public class BanterMenuFragment extends Fragment {
         new LoadRooms().execute();
     }
 
+
     /* Class handles the loading of the rooms that a user has access to */
     class CreateRooms extends AsyncTask<String,String,String> {
 
@@ -113,7 +119,9 @@ public class BanterMenuFragment extends Fragment {
             try{
                 int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
                 if(success == 1){
-                    //new LoadRooms().execute();
+                    BanterRoom banterRoom = new BanterRoom(name);
+                    banterRoom.setId(jsonObject.getInt(BanterSQLContract.TAG_ID));
+                    banterActivity.banterDataModel.addBanterRoom(banterRoom);
                 }
             } catch (Exception e){
                 e.printStackTrace();
@@ -142,33 +150,31 @@ public class BanterMenuFragment extends Fragment {
         }
         @Override
         protected String doInBackground(String... args) {
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            JSONObject json = banterActivity.jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_ALL_ROOMS,"GET",params);
-            try{
-                int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
-                if (success == 1) {
-                    rooms = json.getJSONArray(BanterSQLContract.TAG_ROOMS);
-                    for (int i = 0; i < rooms.length(); i++) {
-                        JSONObject c = rooms.getJSONObject(i);
-
-                        BanterRoom b = new BanterRoom(c.getString(BanterSQLContract.TAG_NAME));
-                        b.setId(c.getInt(BanterSQLContract.TAG_ID));
-
-                        for(BanterRoom banterRoom : banterActivity.banterDataModel.banterRooms){
-                            if(banterRoom.equals(b)){
-                                banterRoom.setName(c.getString(BanterSQLContract.TAG_NAME));
-                                banterRoom.setId(c.getInt(BanterSQLContract.TAG_ID));
-                                banterRoom.setAdminpassword(c.getString(BanterSQLContract.TAG_ADMINPASSWORD));
-                                banterRoom.setDateCreated(c.getString(BanterSQLContract.TAG_DATE_CREATED));
-                                banterRoom.setLastUpdated(c.getString(BanterSQLContract.TAG_LAST_UPDATED));
-                                banterRoom.setPostAmount(c.getInt(BanterSQLContract.TAG_POSTS));
-                                banterRoom.setPassword(c.getString(BanterSQLContract.TAG_PASSWORD));
-                            }
-                        }
+            ArrayList<BanterRoom> temp = banterActivity.banterDataModel.banterRooms;
+            int[] roomIDs = new int[temp.size()];
+            for(int i = 0; i < temp.size(); i++){
+                roomIDs[i] = temp.get(i).getId();
+            }
+            for(int i = 0; i < roomIDs.length; i++){
+                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_ID,Integer.toString(roomIDs[i])));
+                JSONObject json = banterActivity.jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_ROOM,"GET",params);
+                try{
+                    int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
+                    if (success == 1) {
+                        roomObject = json.getJSONObject(BanterSQLContract.TAG_ROOM);
+                        BanterRoom banterRoom = new BanterRoom(roomObject.getString(BanterSQLContract.TAG_NAME));
+                        banterRoom.setName(roomObject.getString(BanterSQLContract.TAG_NAME));
+                        banterRoom.setId(roomObject.getInt(BanterSQLContract.TAG_ID));
+                        banterRoom.setAdminpassword(roomObject.getString(BanterSQLContract.TAG_ADMINPASSWORD));
+                        banterRoom.setDateCreated(roomObject.getString(BanterSQLContract.TAG_DATE_CREATED));
+                        banterRoom.setLastUpdated(roomObject.getString(BanterSQLContract.TAG_LAST_UPDATED));
+                        banterRoom.setPostAmount(roomObject.getInt(BanterSQLContract.TAG_POSTS));
+                        banterRoom.setPassword(roomObject.getString(BanterSQLContract.TAG_PASSWORD));
                     }
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
             return null;
         }

@@ -30,7 +30,7 @@ import java.util.*;
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
     int currentFragment = -1;
-    boolean isNetworkAvailable;
+    boolean isNetworkAvailable = false;
 
     BanterMenuFragment banterMenuFragment;
     BanterRoomFragment banterRoomFragment;
@@ -62,10 +62,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         checkNetworkConnection();
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
-
-        if(isNetworkAvailable) {
-            banterMenuFragment.loadRooms();
-        }
 
         transact(banterMenuFragment);
 
@@ -125,6 +121,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     }
     private void loadBanterDataModel(){
         try {
+            //deleteFile(getFilesDir().getAbsolutePath() + "banter");
             FileInputStream fileInputStream = new FileInputStream(getBaseContext().getFilesDir().getAbsolutePath() + "/banter");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             banterDataModel = (BanterDataModel)objectInputStream.readObject();
@@ -178,8 +175,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             public void onClick(View v) {
                 try {
                     if(validateRoomInput()) {
-                        BanterRoom banterRoom = new BanterRoom(dialogRoomName.getText().toString());
-                        banterDataModel.addBanterRoom(banterRoom);
                         banterMenuFragment.createRooms();
                         dialog.dismiss();
                     } else {
