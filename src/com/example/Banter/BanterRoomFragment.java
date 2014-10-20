@@ -2,7 +2,6 @@ package com.example.Banter;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,8 +15,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Timer;
 import java.util.Date;
 import java.util.Timer;
 
@@ -318,4 +317,6 @@ public class BanterRoomFragment extends Fragment {
         }
 
     }
+
+
 }
