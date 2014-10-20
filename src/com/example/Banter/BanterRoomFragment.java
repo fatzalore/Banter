@@ -2,6 +2,7 @@ package com.example.Banter;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,7 +16,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
 
 /**
  * Created by jacobmeidell on 17.10.14.
@@ -135,17 +139,9 @@ public class BanterRoomFragment extends Fragment {
                                     else
                                         currentPost.setName(userTextView.getText().toString());
 
-                                    banterActivity.banterDataModel.currentRoom.addPost(currentPost);
-                                    currentPost = new BanterPost();
-
-                                    /* Remove old data */
-                                    newPostImage.setVisibility(View.GONE);
-                                    newPostText.setText("");
-
                                     /* TODO: update database */
 
-                                    /* refresh ui */
-                                    banterRoomListAdapter.notifyDataSetChanged();
+
                                 }
                             })
                             .setNegativeButton("Back", new DialogInterface.OnClickListener() {
@@ -269,6 +265,58 @@ public class BanterRoomFragment extends Fragment {
                 }
             });
         }
+    }
+
+    /* Class handles the loading of the rooms that a user has access to */
+    class CreateRooms extends AsyncTask<String,String,String> {
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            banterActivity.progressDialog = new ProgressDialog(banterActivity.getBaseContext());
+            banterActivity.progressDialog.setMessage("Creating Room...");
+            banterActivity.progressDialog.setIndeterminate(false);
+            banterActivity.progressDialog.setCancelable(false);
+            banterActivity.progressDialog.show();
+        }
+        @Override
+        protected String doInBackground(String... args) {
+
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_NAME, currentPost.getName()));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_TEXT, currentPost.getText()));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_TIME, currentPost.getTime()));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID, Integer.toString(banterActivity.banterDataModel.currentRoom.getId())));
+            JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_POST,"POST",params);
+
+            try{
+                int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
+                if(success == 1){
+                    banterActivity.banterDataModel.currentRoom.addPost(currentPost);
+                    //new LoadRooms().execute();
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String file_url) {
+            banterActivity.progressDialog.dismiss();
+
+            banterActivity.banterDataModel.currentRoom.addPost(currentPost);
+            currentPost = new BanterPost();
+
+            /* refresh ui */
+            banterActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    banterRoomListAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
     }
 
 

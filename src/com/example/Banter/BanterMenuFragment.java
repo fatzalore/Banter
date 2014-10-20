@@ -37,6 +37,7 @@ public class BanterMenuFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BanterActivity banterActivity = (BanterActivity) getActivity();
+                banterActivity.banterDataModel.currentRoom = banterActivity.banterDataModel.banterRooms.get(position);
                 banterActivity.transactToRoomFragment();
             }
         });
