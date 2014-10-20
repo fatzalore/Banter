@@ -50,4 +50,5 @@ public class BanterMenuListAdapter extends ArrayAdapter<BanterRoom> {
         viewHolderItem.posts.setText(Integer.toString(banterRoom.getPostAmount()));
         return convertView;
     }
+
 }
