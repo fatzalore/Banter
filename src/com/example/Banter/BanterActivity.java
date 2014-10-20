@@ -50,6 +50,8 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
 
     ProgressDialog progressDialog;
     JSONArray rooms = null;
+    JSONParser jsonParser = new JSONParser();
+
 
 
     @Override

@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by jacobmeidell on 17.10.14.
@@ -34,6 +36,7 @@ public class BanterRoomFragment extends Fragment {
     EditText newPostText;
     ImageView newPostImage;
 
+    Timer timer;
     JSONArray posts = null;
     JSONParser jsonParser = new JSONParser();
 
@@ -59,7 +62,8 @@ public class BanterRoomFragment extends Fragment {
         submitPostButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_submit_button);
         newPostText = (EditText) banterRoomFragment.findViewById(R.id.room_post_text);
         newPostImage = (ImageView) banterRoomFragment.findViewById(R.id.room_post_camera_temp);
-        
+
+
         /* bottom buttons listeners */
         addCameraListener();
         //addAttachImageListener();
@@ -68,6 +72,7 @@ public class BanterRoomFragment extends Fragment {
 
         addOnHoldCameraTempImageListener();
 
+        checkNewPosts();
         /* get data */
         // addTestData();
         /* TEST DATA end */
@@ -270,5 +275,13 @@ public class BanterRoomFragment extends Fragment {
         }
     }
 
-
+    private void checkNewPosts(){
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new PostPolling().execute();
+            }
+        }, 0 , 10000);
+    }
 }
