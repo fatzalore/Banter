@@ -11,7 +11,7 @@
             android:id="@+id/new_room_dialog_room_name"
             android:hint="Room name"
             android:paddingLeft="10dp"
-            android:paddingTop="10dp"/>
+            android:paddingTop="10dp" android:singleLine="true"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:hint="Password"
             android:paddingLeft="10dp"
-            android:paddingTop="10dp"/>
+            android:paddingTop="10dp" android:singleLine="true"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:layout_gravity="center_horizontal"
             android:hint="Repeat password"
             android:paddingLeft="10dp"
-            android:paddingTop="10dp"/>
+            android:paddingTop="10dp" android:singleLine="true"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:layout_gravity="center_horizontal"
             android:hint="Admin password"
             android:paddingLeft="10dp"
-            android:paddingTop="10dp"/>
+            android:paddingTop="10dp" android:singleLine="true"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             android:layout_gravity="center_horizontal"
             android:hint="Repeat admin password"
             android:paddingLeft="10dp"
-            android:paddingTop="10dp" android:paddingBottom="10dp"/>
+            android:paddingTop="10dp" android:paddingBottom="10dp" android:singleLine="true"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

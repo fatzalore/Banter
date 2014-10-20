@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,9 +24,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
 
@@ -46,10 +46,12 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     ImageButton dialogYes;
     ImageButton dialogNo;
 
+    Timer timer;
 
     ProgressDialog progressDialog;
     JSONParser jsonParser = new JSONParser();
     static String URL_GET_ALL_ROOMS = "http://vie.nu/banter/getAllRooms.php";
+    static String URL_CREATE_NEW_ROOM = "http://vie.nu/banter/addRoom.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_ROOMS= "rooms";
     private static final String TAG_ID = "id";
@@ -70,14 +72,14 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         banterDataModel = new BanterDataModel();
         fragmentManager = getFragmentManager();
         loadBanterDataModel();
-        Log.e("@@@@@@@@@@@@@@@","" + banterDataModel.banterRooms.size());
+        Log.e("@@@@@@@@@@@@@@@", "" + banterDataModel.banterRooms.size());
         banterMenuFragment = new BanterMenuFragment();
         banterRoomFragment = new BanterRoomFragment();
-        isNetworkAvailable = isNetworkAvailable();
-
+        checkNetworkConnection();
         if(isNetworkAvailable) {
             new LoadRooms().execute();
         }
+
         transact(banterMenuFragment);
 
     }
@@ -145,6 +147,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     @Override
     protected void onPause(){
         super.onPause();
+        timer.cancel();
         saveBanterDataModel();
     }
 
@@ -155,6 +158,18 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             finish();
         }
         super.onBackPressed();
+    }
+    private boolean validateRoomInput(){
+        if(dialogRoomName.getText().toString().length() > 0 &&
+           dialogPassword.getText().toString().length() > 0 &&
+           dialogRepeatPassword.getText().toString().length() > 0 &&
+           dialogAdminPassword.getText().toString().length() > 0 &&
+           dialogRepeatAdminPassword.getText().toString().length() > 0 &&
+           dialogAdminPassword.getText().toString().equals(dialogRepeatAdminPassword.getText().toString()) &&
+           dialogPassword.getText().toString().equals(dialogRepeatPassword.getText().toString())){
+           return true;
+        }
+        return false;
     }
     /* Creates the pop up dialog to input information about new Banter Room */
     private void createNewRoomDialog(){
@@ -171,12 +186,15 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         dialogYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO IMPLEMENT SAVING
-                /* FOR TESTING ONLY */
                 try {
-                    BanterRoom banterRoom = new BanterRoom(dialogRoomName.getText().toString());
-                    banterDataModel.addBanterRoom(banterRoom);
-                    dialog.dismiss();
+                    if(validateRoomInput()) {
+                        BanterRoom banterRoom = new BanterRoom(dialogRoomName.getText().toString());
+                        banterDataModel.addBanterRoom(banterRoom);
+                        new CreateRooms().execute();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(getBaseContext(),"Sorry, some fields are missing and/or passwords don't match",Toast.LENGTH_LONG).show();
+                    }
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -224,15 +242,21 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                     rooms = json.getJSONArray(TAG_ROOMS);
                     for (int i = 0; i < rooms.length(); i++) {
                         JSONObject c = rooms.getJSONObject(i);
-                        BanterRoom banterRoom = new BanterRoom(c.getString(TAG_NAME));
-                        banterRoom.setId(c.getInt(TAG_ID));
-                        banterRoom.setAdminpassword(c.getString(TAG_ADMINPASSWORD));
-                        banterRoom.setDateCreated(c.getString(TAG_DATE_CREATED));
-                        banterRoom.setLastUpdated(c.getString(TAG_LAST_UPDATED));
-                        banterRoom.setPostAmount(c.getInt(TAG_POSTS));
-                        banterRoom.setPassword(c.getString(TAG_PASSWORD));
-                        banterDataModel.addBanterRoom(banterRoom);
-                        Log.e("@@@@@@@@@@@@@@@","" + banterDataModel.banterRooms.size());
+
+                        BanterRoom b = new BanterRoom(c.getString(TAG_NAME));
+                        b.setId(c.getInt(TAG_ID));
+
+                        for(BanterRoom banterRoom : banterDataModel.banterRooms){
+                            if(banterRoom.equals(b)){
+                                banterRoom.setName(c.getString(TAG_NAME));
+                                banterRoom.setId(c.getInt(TAG_ID));
+                                banterRoom.setAdminpassword(c.getString(TAG_ADMINPASSWORD));
+                                banterRoom.setDateCreated(c.getString(TAG_DATE_CREATED));
+                                banterRoom.setLastUpdated(c.getString(TAG_LAST_UPDATED));
+                                banterRoom.setPostAmount(c.getInt(TAG_POSTS));
+                                banterRoom.setPassword(c.getString(TAG_PASSWORD));
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -247,11 +271,67 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         }
 
     }
+
+    /* Class handles the loading of the rooms that a user has access to */
+    class CreateRooms extends AsyncTask<String,String,String> {
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(BanterActivity.this);
+            progressDialog.setMessage("Creating Room...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+        @Override
+        protected String doInBackground(String... args) {
+            String name = dialogRoomName.getText().toString();
+            String password = dialogPassword.getText().toString();
+            String adminPassword = dialogAdminPassword.getText().toString();
+            SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            Date now = new Date();
+            String dateCreated = sdfDate.format(now);
+
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(TAG_NAME,name));
+            params.add(new BasicNameValuePair(TAG_PASSWORD,password));
+            params.add(new BasicNameValuePair(TAG_ADMINPASSWORD,adminPassword));
+            params.add(new BasicNameValuePair(TAG_DATE_CREATED, dateCreated));
+            JSONObject jsonObject = jsonParser.makeHttpRequest(URL_CREATE_NEW_ROOM,"POST",params);
+
+            try{
+                int success = jsonObject.getInt(TAG_SUCCESS);
+                if(success == 1){
+                    //new LoadRooms().execute();
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String file_url) {
+            progressDialog.dismiss();
+        }
+
+    }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void checkNetworkConnection(){
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isNetworkAvailable = isNetworkAvailable();
+            }
+        }, 0, 5000);
     }
 }
 
