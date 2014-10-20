@@ -75,8 +75,13 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         viewHolderItem.incLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                values.get(position).incrementLikes();
-                notifyDataSetChanged();
+                if (!values.get(position).isLiked()) {
+                    values.get(position).incrementLikes();
+                    notifyDataSetChanged();
+                    values.get(position).setLiked(true);
+                } else {
+
+                }
                 // TODO set image to a green arrow, same with on down
             }
         });
@@ -84,8 +89,13 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         viewHolderItem.decLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                values.get(position).decrementLikes();
-                notifyDataSetChanged();
+                if (!values.get(position).isLiked()) {
+                    values.get(position).decrementLikes();
+                    notifyDataSetChanged();
+                    values.get(position).setLiked(true);
+                } else {
+
+                }
             }
         });
 

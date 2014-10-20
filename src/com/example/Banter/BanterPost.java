@@ -66,7 +66,10 @@ public class BanterPost implements Serializable {
     }
 
     public Bitmap getImage() {
-        return image.picture;
+        if (image != null)
+            return image.picture;
+        else
+            return null;
     }
 
     public void setImage(Bitmap image) {

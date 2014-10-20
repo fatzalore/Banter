@@ -18,6 +18,10 @@ public class SerializableBitmap implements Serializable {
         this.picture = picture;
     }
 
+    public Bitmap getBitmap() {
+        return picture;
+    }
+
     /* Write the bitmap image as a stream of bytes */
     private void writeObject(ObjectOutputStream out) throws IOException {
         if (picture != null) {
