@@ -160,29 +160,24 @@ public class BanterMenuFragment extends Fragment {
         }
         @Override
         protected String doInBackground(String... args) {
-            ArrayList<BanterRoom> temp = banterActivity.banterDataModel.banterRooms;
-            int[] roomIDs = new int[temp.size()];
-            for(int i = 0; i < temp.size(); i++){
-                roomIDs[i] = temp.get(i).getId();
-                Log.e("@@@@@@@@@@@","ACCESS TO ID " + roomIDs[i]);
-            }
-            for(int i = 0; i < roomIDs.length; i++){
+
+            for(int i = 0; i <  banterActivity.banterDataModel.banterRooms.size(); i++){
+                BanterRoom banterRoom = banterActivity.banterDataModel.banterRooms.get(i);
                 ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair(BanterSQLContract.TAG_ID,Integer.toString(roomIDs[i])));
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_ID,Integer.toString(banterRoom.getId())));
                 JSONObject json = banterActivity.jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_ROOM,"GET",params);
                 try{
                     int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
                     if (success == 1) {
                         roomObject = json.getJSONArray(BanterSQLContract.TAG_ROOM);
-                        BanterRoom banterRoom = new BanterRoom(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_NAME));
                         banterRoom.setName(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_NAME));
                         banterRoom.setId(roomObject.getJSONObject(0).getInt(BanterSQLContract.TAG_ID));
-                        Log.e("@@@@@@@@@@", "GETTING ID " + banterRoom.getId());
                         banterRoom.setAdminpassword(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_ADMINPASSWORD));
                         banterRoom.setDateCreated(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_DATE_CREATED));
                         banterRoom.setLastUpdated(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_LAST_UPDATED));
                         banterRoom.setPostAmount(roomObject.getJSONObject(0).getInt(BanterSQLContract.TAG_POSTS));
                         banterRoom.setPassword(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_PASSWORD));
+
                     }
                 } catch (Exception e){
                     e.printStackTrace();
