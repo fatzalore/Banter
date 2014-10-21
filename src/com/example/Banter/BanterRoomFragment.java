@@ -438,17 +438,14 @@ public class BanterRoomFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String file_url) {
-            if (timer != null) {
-                if (banterRoomFragment.isShown()) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getBanterRoomListAdapter().notifyDataSetChanged();
-                        }
-                    });
-                }
+            if (banterRoomFragment.isShown()) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getBanterRoomListAdapter().notifyDataSetChanged();
+                    }
+                });
             }
-            beginPostPolling(interval);
         }
     }
 
