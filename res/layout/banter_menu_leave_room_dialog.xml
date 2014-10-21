@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ab_bottom_solid_banter"
+            android:paddingTop="0dp"
+            android:hint="Leave room?">
+        <ImageButton
+                android:id="@+id/leave_room_no"
+                android:src="@drawable/ic_action_remove"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                />
+        <ImageButton
+                android:id="@+id/leave_room_yes"
+                android:src="@drawable/ic_action_done"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"/>
+    </LinearLayout>
+</LinearLayout>

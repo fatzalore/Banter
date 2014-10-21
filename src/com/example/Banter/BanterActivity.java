@@ -218,11 +218,10 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     }
 
     private void toggleSearchDialog(){
-        if(banterMenuFragment.getSearchDialog() == null){
+        if(banterMenuFragment.getSearchDialog() == null || !banterMenuFragment.getSearchDialog().isShowing()){
             banterMenuFragment.createSearchDialog();
         } else {
             banterMenuFragment.getSearchDialog().dismiss();
-            banterMenuFragment.setSearchDialog(null);
         }
     }
 

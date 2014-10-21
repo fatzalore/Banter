@@ -38,6 +38,9 @@ public class BanterMenuFragment extends Fragment {
     private Dialog passwordDialog;
     private ImageButton passwordDialogYes;
     private ImageButton passwordDialogNo;
+    private Dialog leaveRoomDialog;
+    private ImageButton leaveRoomDialogYes;
+    private ImageButton leaveRoomDialogNo;
 
 
     @Override
@@ -58,8 +61,15 @@ public class BanterMenuFragment extends Fragment {
                 loadRooms();
             }
         }
+        setBanterRoomListOnClickListener();
+        setBanterRoomListOnLongClickListener();
 
-        /* Listen for item clicks */
+
+
+        return banterMenuFragment;
+    }
+    private void setBanterRoomListOnClickListener(){
+         /* Listen for item clicks */
         banterRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -68,8 +78,36 @@ public class BanterMenuFragment extends Fragment {
                 banterActivity.transactToRoomFragment();
             }
         });
-
-        return banterMenuFragment;
+    }
+    private void setBanterRoomListOnLongClickListener(){
+        banterRoomList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final int pos = position;
+                leaveRoomDialog = new Dialog(banterActivity);
+                leaveRoomDialog.setContentView(R.layout.banter_menu_leave_room_dialog);
+                leaveRoomDialog.setTitle("Leave room?");
+                leaveRoomDialogYes = (ImageButton)leaveRoomDialog.findViewById(R.id.leave_room_yes);
+                leaveRoomDialogNo = (ImageButton)leaveRoomDialog.findViewById(R.id.leave_room_no);
+                leaveRoomDialogYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(banterActivity,"Left room " + banterActivity.banterDataModel.banterRooms.get(pos).getName(),Toast.LENGTH_SHORT);
+                        banterActivity.banterDataModel.banterRooms.remove(pos);
+                        banterMenuListAdapter.notifyDataSetChanged();
+                        leaveRoomDialog.dismiss();
+                    }
+                });
+                leaveRoomDialogNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        leaveRoomDialog.dismiss();
+                    }
+                });
+                leaveRoomDialog.show();
+                return true;
+            }
+        });
     }
 
     /* Set the custom action bar to the menu fragment */
@@ -149,15 +187,7 @@ public class BanterMenuFragment extends Fragment {
     /* Class handles the loading of the rooms that a user has access to */
     class LoadRooms extends AsyncTask<String,String,String> {
 
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            banterActivity.progressDialog = new ProgressDialog(getActivity());
-            banterActivity.progressDialog.setMessage("Loading rooms...");
-            banterActivity.progressDialog.setIndeterminate(false);
-            banterActivity.progressDialog.setCancelable(false);
-            banterActivity.progressDialog.show();
-        }
+
         @Override
         protected String doInBackground(String... args) {
 
@@ -187,11 +217,11 @@ public class BanterMenuFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String file_url) {
-            banterActivity.progressDialog.dismiss();
             getBanterMenuListAdapter().notifyDataSetChanged();
         }
 
     }
+
 
     class SearchRooms extends AsyncTask<String,String,String> {
 
@@ -275,6 +305,7 @@ public class BanterMenuFragment extends Fragment {
                     getBanterMenuListAdapter().notifyDataSetChanged();
                     passwordDialog.dismiss();
                     searchDialog.dismiss();
+
                 }
             }
         });
