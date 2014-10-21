@@ -295,4 +295,7 @@ public class BanterMenuFragment extends Fragment {
     public Dialog getSearchDialog(){
         return searchDialog;
     }
+    public void setSearchDialog(Dialog dialog){
+        searchDialog = dialog;
+    }
 }
