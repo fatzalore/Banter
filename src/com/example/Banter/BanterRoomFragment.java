@@ -74,33 +74,10 @@ public class BanterRoomFragment extends Fragment {
 
         addOnHoldCameraTempImageListener();
 
-        /* get data */
-        // addTestData();
-        /* TEST DATA end */
-
         banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), banterActivity.banterDataModel.currentRoom.getPosts());
         banterRoomList.setAdapter(banterRoomListAdapter);
 
-
         return banterRoomFragment;
-    }
-
-    private void addTestData() {
-         /* TEST DATA! */
-        banterActivity.banterDataModel.currentRoom = new BanterRoom("test room");
-        BanterPost testPost1 = new BanterPost();
-        testPost1.setName("Ali baba");
-        testPost1.setLikes(9);
-        testPost1.setText("Lorem ipsum .... blablablabla Banter i massevis");
-        testPost1.setTimeAndDateToNow();
-        BanterPost testPost2 = new BanterPost();
-        testPost2.setName("Venn av ali baba");
-        testPost2.setLikes(-11);
-        testPost2.setTimeAndDateToNow();
-        testPost2.setText("Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis Lorem ipsum .... blablablabla Banter i massevis");
-        banterActivity.banterDataModel.currentRoom.addPost(testPost1);
-        banterActivity.banterDataModel.currentRoom.addPost(testPost2);
-        /* TEST DATA end*/
     }
 
     private void addCameraListener() {
