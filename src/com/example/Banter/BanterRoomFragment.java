@@ -232,7 +232,7 @@ public class BanterRoomFragment extends Fragment {
                         JSONObject c = posts.getJSONObject(i);
 
                         BanterPost banterPost = new BanterPost();
-                        banterPost.setId(c.getInt(BanterSQLContract.TAG_POST_ID));
+                        banterPost.setId(c.getInt(BanterSQLContract.TAG_ID));
                         banterPost.setName(c.getString(BanterSQLContract.TAG_NAME));
                         banterPost.setLikes(c.getInt(BanterSQLContract.TAG_LIKES));
                         banterPost.setText(c.getString(BanterSQLContract.TAG_TEXT));
