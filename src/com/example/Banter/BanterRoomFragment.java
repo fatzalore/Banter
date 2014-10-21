@@ -41,10 +41,16 @@ public class BanterRoomFragment extends Fragment {
     Timer timer;
     JSONArray posts = null;
     JSONParser jsonParser = new JSONParser();
+
     Dialog submitDialog;
     ImageButton submitDialogYes;
     ImageButton submitDialogNo;
     EditText submitDialogInput;
+
+    Dialog removeImageDialog;
+    ImageButton removeImageDialogYes;
+    ImageButton removeImageDialogNo;
+
     BanterRoomListAdapter banterRoomListAdapter;
     BanterPost currentPost = new BanterPost(); // This is the post that is currently written by user. When user press submit, the info (image etc.) will be retrieved from this obj.
     BanterActivity banterActivity;
@@ -147,25 +153,26 @@ public class BanterRoomFragment extends Fragment {
         newPostImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Remove image?")
-                        .setPositiveButton("Keep", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // nothing happens
-                            }
-                        })
-                        .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                /* remove picture from ui and data object */
-                                newPostImage.setVisibility(View.GONE);
-                                currentPost.setImage(null);
-                            }
-                        })
-                        .show();
-
+                removeImageDialog = new Dialog(getActivity());
+                removeImageDialog.setContentView(R.layout.banter_room_remove_image_dialog);
+                removeImageDialog.setTitle("Remove image?");
+                removeImageDialogYes = (ImageButton) removeImageDialog.findViewById(R.id.remove_image_dialog_yes);
+                removeImageDialogNo = (ImageButton) removeImageDialog.findViewById(R.id.remove_image_dialog_no);
+                removeImageDialogYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        currentPost.setImage(null);
+                        newPostImage.setVisibility(View.GONE);
+                        removeImageDialog.dismiss();
+                    }
+                });
+                removeImageDialogNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeImageDialog.dismiss();
+                    }
+                });
+                removeImageDialog.show();
                 return false;
             }
         });

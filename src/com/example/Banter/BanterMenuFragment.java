@@ -271,6 +271,7 @@ public class BanterMenuFragment extends Fragment {
         passwordDialogNo = (ImageButton) passwordDialog.findViewById(R.id.password_dialog_input_no);
         passwordDialogInput = (EditText) passwordDialog.findViewById(R.id.password_dialog_input);
 
+
         passwordDialogYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
