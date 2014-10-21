@@ -1,9 +1,7 @@
 package com.example.Banter;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.ProgressDialog;
+import android.app.*;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -262,7 +260,7 @@ public class BanterRoomFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.banter_room_actionbar,menu);
+        inflater.inflate(R.menu.banter_room_actionbar, menu);
     }
     public BanterRoomListAdapter getBanterRoomListAdapter(){
         return banterRoomListAdapter;
