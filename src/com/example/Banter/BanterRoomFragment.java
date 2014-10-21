@@ -1,6 +1,7 @@
 package com.example.Banter;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -40,12 +41,12 @@ public class BanterRoomFragment extends Fragment {
     Timer timer;
     JSONArray posts = null;
     JSONParser jsonParser = new JSONParser();
-
-
+    Dialog submitDialog;
+    ImageButton submitDialogYes;
+    ImageButton submitDialogNo;
+    EditText submitDialogInput;
     BanterRoomListAdapter banterRoomListAdapter;
-
     BanterPost currentPost = new BanterPost(); // This is the post that is currently written by user. When user press submit, the info (image etc.) will be retrieved from this obj.
-
     BanterActivity banterActivity;
 
     @Override
@@ -103,41 +104,40 @@ public class BanterRoomFragment extends Fragment {
                 currentPost.setLikes(0);
 
                 if (currentPost.getImage() != null || currentPost.getText().length() > 0) {
-                    /* ok, we are ready to post */
-                    final EditText userTextView = new EditText(getActivity());
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Written by?")
-                            .setView(userTextView)
-                            .setPositiveButton("Post", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    /* save post! */
-                                    if (userTextView.getText().length() < 1)
-                                        currentPost.setName("Anonymous");
-                                    else
-                                        currentPost.setName(userTextView.getText().toString());
 
-                                    /* send to db */
-                                    if (banterActivity.isNetworkAvailable) {
-                                        new CreatePost().execute();
-                                    }
-                                    else {
-                                        // TODO: toast no internet connection..
-                                    }
+                    submitDialog = new Dialog(banterActivity);
+                    submitDialog.setContentView(R.layout.banter_room_submit_dialog);
+                    submitDialog.setTitle("Banter by...?");
+                    submitDialogYes = (ImageButton) submitDialog.findViewById(R.id.room_submit_dialog_yes);
+                    submitDialogNo = (ImageButton) submitDialog.findViewById(R.id.room_submit_dialog_no);
+                    submitDialogInput = (EditText) submitDialog.findViewById(R.id.room_submit_dialog_input);
+                    submitDialogYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (submitDialogInput.getText().toString().length() < 1) {
+                                currentPost.setName("Anonymous");
+                            } else {
+                                currentPost.setName(submitDialogInput.getText().toString());
+                                if (banterActivity.isNetworkAvailable) {
+                                    new CreatePost().execute();
+                                    submitDialog.dismiss();
+                                } else {
+                                    Toast.makeText(getActivity(),"Sorry, no internet connection available",Toast.LENGTH_SHORT).show();
+                                    submitDialog.dismiss();
                                 }
-                            })
-                            .setNegativeButton("Back", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                /* user still have text and image available.. but nothing is done */
-                                }
-                            })
-                            .show();
+                            }
+                        }
+                    });
 
-                } else {
-                    /* no image or text? not a valid post.. */
+                    submitDialogNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            submitDialog.dismiss();
+                        }
+                    });
 
                 }
+                submitDialog.show();
             }
         });
     }

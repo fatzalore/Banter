@@ -82,7 +82,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                 if(isNetworkAvailable){
                     createNewRoomDialog();
                 } else {
-                    Toast.makeText(this,"Sorry, you are not connected to the internet",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,"Sorry, no internet connection available",Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.search:
@@ -154,6 +154,11 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         timer.cancel();
         saveBanterDataModel();
     }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        checkNetworkConnection();
+    }
 
     @Override
     public void onBackPressed() {
@@ -217,7 +222,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             banterMenuFragment.createSearchDialog();
         } else {
             banterMenuFragment.getSearchDialog().dismiss();
-            //banterMenuFragment.getSearchDialog() = null;
+            banterMenuFragment.setSearchDialog(null);
         }
     }
 
