@@ -1,6 +1,7 @@
 package com.example.Banter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +10,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 /**
  * Created by Erlend on 17.10.2014.
  */
 public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
+
+    private static String OPERATOR_PLUS = "plus";
+    private static String OPERATOR_MINUS = "minus";
 
     private Context context;
     private ArrayList<BanterPost> values;
@@ -79,10 +87,13 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                     values.get(position).incrementLikes();
                     notifyDataSetChanged();
                     values.get(position).setLiked(true);
+
+                    /* update db */
+                    new incrementOrDecrementLikes(values.get(position).getId(), OPERATOR_PLUS).execute();
+
                 } else {
 
                 }
-                // TODO set image to a green arrow, same with on down
             }
         });
 
@@ -93,6 +104,10 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                     values.get(position).decrementLikes();
                     notifyDataSetChanged();
                     values.get(position).setLiked(true);
+
+                    /* update db */
+                    new incrementOrDecrementLikes(values.get(position).getId(), OPERATOR_MINUS).execute();
+
                 } else {
 
                 }
@@ -100,5 +115,42 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         });
 
         return convertView;
+    }
+
+    /* Class handles the incrementing or decrementing of likes in database */
+    class incrementOrDecrementLikes extends AsyncTask<String,String,String> {
+
+        JSONParser jsonParser;
+        int post_id;
+        String operator;
+
+        public incrementOrDecrementLikes(int post_id, String operator) {
+            super();
+            jsonParser = new JSONParser();
+            this.post_id = post_id;
+            this.operator = operator;
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID, Integer.toString(post_id)));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_OPERATOR, operator));
+
+            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_LIKE_POST, "POST", params);
+
+            try {
+                int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
+                if (success == 1) {
+
+                } else {
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

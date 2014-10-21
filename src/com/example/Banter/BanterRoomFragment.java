@@ -321,7 +321,6 @@ public class BanterRoomFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.e("POST POLLING", "TRYING TO GET NEW POSTS");
                 new PostPolling().execute();
             }
         }, 0, 5000);

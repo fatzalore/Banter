@@ -4,11 +4,12 @@ package com.example.Banter;
  * Created by jacobmeidell on 20.10.14.
  */
 public class BanterSQLContract {
-    static String URL_GET_ALL_ROOMS = "http://vie.nu/banter/getAllRooms.php";
-    static String URL_CREATE_NEW_ROOM = "http://vie.nu/banter/addRoom.php";
-    static String URL_GET_POSTS = "http://vie.nu/banter/getPosts.php";
-    static String URL_GET_ROOM = "http://vie.nu/banter/getRoom.php";
-    static String URL_CREATE_NEW_POST = "http://vie.nu/banter/addPost.php";
+    static final String URL_GET_ALL_ROOMS = "http://vie.nu/banter/getAllRooms.php";
+    static final String URL_CREATE_NEW_ROOM = "http://vie.nu/banter/addRoom.php";
+    static final String URL_GET_POSTS = "http://vie.nu/banter/getPosts.php";
+    static final String URL_GET_ROOM = "http://vie.nu/banter/getRoom.php";
+    static final String URL_CREATE_NEW_POST = "http://vie.nu/banter/addPost.php";
+    static final String URL_LIKE_POST = "http://vie.nu/banter/likePost.php";
     static final String TAG_SUCCESS = "success";
     static final String TAG_ROOM = "room";
     static final String TAG_ID = "id";
@@ -23,4 +24,5 @@ public class BanterSQLContract {
      static final String TAG_TEXT = "text";
      static final String TAG_LIKES = "likes";
      static final String TAG_TIME = "time";
+     static final String TAG_OPERATOR = "operator";
 }
