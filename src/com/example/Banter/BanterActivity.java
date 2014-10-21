@@ -217,7 +217,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             banterMenuFragment.createSearchDialog();
         } else {
             banterMenuFragment.getSearchDialog().dismiss();
-            banterMenuFragment.getSearchDialog() = null;
+            //banterMenuFragment.getSearchDialog() = null;
         }
     }
 
