@@ -149,7 +149,7 @@ public class BanterRoomFragment extends Fragment {
                                 newPostText.setText("");
                                 submitDialog.dismiss();
                             } else {
-                                Toast.makeText(getActivity(),"Sorry, no internet connection available",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Sorry, no internet connection available", Toast.LENGTH_SHORT).show();
                                 submitDialog.dismiss();
                             }
                         }
@@ -275,7 +275,7 @@ public class BanterRoomFragment extends Fragment {
             BanterRoom current = banterActivity.getBanterDataModel().currentRoom;
 
             ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID,Integer.toString(current.getId())));
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID, Integer.toString(current.getId())));
 
             /* what is id of last post? if exists */
             if (current.getPosts().size() > 0) {
@@ -439,12 +439,14 @@ public class BanterRoomFragment extends Fragment {
         @Override
         protected void onPostExecute(String file_url) {
             if (timer != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getBanterRoomListAdapter().notifyDataSetChanged();
-                    }
-                });
+                if (banterRoomFragment.isShown()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getBanterRoomListAdapter().notifyDataSetChanged();
+                        }
+                    });
+                }
             }
             beginPostPolling(interval);
         }
