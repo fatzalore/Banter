@@ -154,6 +154,11 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         timer.cancel();
         saveBanterDataModel();
     }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        checkNetworkConnection();
+    }
 
     @Override
     public void onBackPressed() {
