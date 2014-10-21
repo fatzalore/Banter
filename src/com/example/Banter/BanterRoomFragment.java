@@ -84,6 +84,8 @@ public class BanterRoomFragment extends Fragment {
 
         beginPostPolling();
 
+        new getLikes().execute();
+
         return banterRoomFragment;
     }
 
@@ -212,7 +214,6 @@ public class BanterRoomFragment extends Fragment {
         return banterRoomListAdapter;
     }
 
-
     /* Class handles the loading of the posts of a room that a user has access to */
     class PostPolling extends AsyncTask<String,String,String> {
 
@@ -264,6 +265,7 @@ public class BanterRoomFragment extends Fragment {
                 });
             }
         }
+
     }
 
     /* Class handles the submition of new post */
@@ -340,6 +342,53 @@ public class BanterRoomFragment extends Fragment {
         super.onResume();
         if (timer == null) {
             beginPostPolling();
+        }
+    }
+
+    /* Class handles the loading of the posts of a room that a user has access to */
+    class getLikes extends AsyncTask<String,String,String> {
+
+        @Override
+        protected String doInBackground(String... args) {
+            BanterRoom current = banterActivity.getBanterDataModel().currentRoom;
+
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID, Integer.toString(current.getId())));
+
+            /* what is id of last post? if exists */
+            if (current.getPosts().size() > 0) {
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID, Integer.toString(current.getPosts().get(current.getPosts().size() - 1).getId())));
+            } else {
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID, Integer.toString(0)));
+            }
+
+            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_LIKES, "GET", params);
+            try {
+                int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
+                if (success == 1) {
+                    posts = json.getJSONArray(BanterSQLContract.TAG_POSTS);
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject c = posts.getJSONObject(i);
+                        BanterPost banterPost = current.getPost(i);
+                        banterPost.setLikes(c.getInt(BanterSQLContract.TAG_LIKES));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String file_url) {
+            if (timer != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getBanterRoomListAdapter().notifyDataSetChanged();
+                    }
+                });
+            }
         }
     }
 }

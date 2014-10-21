@@ -10,6 +10,7 @@ public class BanterSQLContract {
     static final String URL_GET_ROOM = "http://vie.nu/banter/getRoom.php";
     static final String URL_CREATE_NEW_POST = "http://vie.nu/banter/addPost.php";
     static final String URL_LIKE_POST = "http://vie.nu/banter/likePost.php";
+    static final String URL_GET_LIKES = "http://vie.nu/banter/getLikes.php";
     static final String TAG_SUCCESS = "success";
     static final String TAG_ROOM = "room";
     static final String TAG_ID = "id";

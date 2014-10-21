@@ -94,4 +94,13 @@ public class BanterRoom implements Serializable {
         }
         return false;
     }
+
+    public BanterPost getPost(int id) {
+        for (BanterPost b : posts) {
+            if (b.getId() == id) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
