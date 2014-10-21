@@ -124,15 +124,16 @@ public class BanterRoomFragment extends Fragment {
                                 currentPost.setName("Anonymous");
                             } else {
                                 currentPost.setName(submitDialogInput.getText().toString());
-                                if (banterActivity.isNetworkAvailable) {
-                                    new CreatePost().execute();
-                                    submitDialog.dismiss();
-                                } else {
-                                    Toast.makeText(getActivity(),"Sorry, no internet connection available",Toast.LENGTH_SHORT).show();
-                                    submitDialog.dismiss();
-                                }
+                            }
+                            if (banterActivity.isNetworkAvailable) {
+                                new CreatePost().execute();
+                                submitDialog.dismiss();
+                            } else {
+                                Toast.makeText(getActivity(),"Sorry, no internet connection available",Toast.LENGTH_SHORT).show();
+                                submitDialog.dismiss();
                             }
                         }
+
                     });
 
                     submitDialogNo.setOnClickListener(new View.OnClickListener() {
