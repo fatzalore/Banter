@@ -323,11 +323,26 @@ public class BanterRoomFragment extends Fragment {
     }
 
     @Override
-     public void onPause() {
+    public void onPause() {
         super.onPause();
         /* cancel post polling when user is about to leave fragment */
         timer.cancel();
         /* timer set to null so background task knows if we have left the fragment */
         timer = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (timer == null) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.e("POST POLLING", "TRYING TO GET NEW POSTS");
+                    new PostPolling().execute();
+                }
+            }, 0, 5000);
+        }
     }
 }
