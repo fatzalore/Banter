@@ -129,6 +129,8 @@ public class BanterRoomFragment extends Fragment {
                             }
                             if (banterActivity.isNetworkAvailable) {
                                 new CreatePost().execute();
+                                newPostImage.setVisibility(View.GONE);
+                                newPostText.setText("");
                                 submitDialog.dismiss();
                             } else {
                                 Toast.makeText(getActivity(),"Sorry, no internet connection available",Toast.LENGTH_SHORT).show();
