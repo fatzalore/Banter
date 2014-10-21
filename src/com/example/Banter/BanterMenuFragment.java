@@ -34,8 +34,10 @@ public class BanterMenuFragment extends Fragment {
     private ArrayList<BanterRoom> searchResultArray = new ArrayList<BanterRoom>();
     private BanterMenuListAdapter searchDialogAdapter;
     private EditText passwordDialogInput;
-    Dialog dialog;
-    private AlertDialog passwordDialog;
+    private Dialog searchDialog;
+    private Dialog passwordDialog;
+    private ImageButton passwordDialogYes;
+    private ImageButton passwordDialogNo;
 
 
     @Override
@@ -232,10 +234,10 @@ public class BanterMenuFragment extends Fragment {
     }
 
     public void createSearchDialog(){
-        dialog = new Dialog(banterActivity);
-        dialog.setContentView(R.layout.banter_search_room_dialog);
-        dialog.setTitle("Search rooms...");
-        searchRoomDialogList = (ListView) dialog.findViewById(R.id.menu_search_list);
+        searchDialog = new Dialog(banterActivity);
+        searchDialog.setContentView(R.layout.banter_search_room_dialog);
+        searchDialog.setTitle("Search rooms...");
+        searchRoomDialogList = (ListView) searchDialog.findViewById(R.id.menu_search_list);
         searchDialogAdapter = new BanterMenuListAdapter(getActivity(),searchResultArray);
         searchRoomDialogList.setAdapter(searchDialogAdapter);
         searchRoomDialogList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -247,8 +249,8 @@ public class BanterMenuFragment extends Fragment {
                 }
             }
         });
-        searchRoomDialogSearchField = (EditText) dialog.findViewById(R.id.menu_search_field);
-        searchRoomDialogButton = (ImageButton) dialog.findViewById(R.id.menu_search_search);
+        searchRoomDialogSearchField = (EditText) searchDialog.findViewById(R.id.menu_search_field);
+        searchRoomDialogButton = (ImageButton) searchDialog.findViewById(R.id.menu_search_search);
         searchRoomDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,33 +259,40 @@ public class BanterMenuFragment extends Fragment {
                 }
             }
         });
-        dialog.show();
+        searchDialog.show();
 
     }
 
-    public void hasUserAccsess(final int position){
-        passwordDialogInput = new EditText((getActivity()));
-        passwordDialog = new AlertDialog.Builder(getActivity())
-                .setTitle("Enter password")
-                .setView(passwordDialogInput)
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if (passwordDialogInput.getText().toString().equals(searchResultArray.get(position).getPassword())) {
-                            banterActivity.banterDataModel.banterRooms.add(searchResultArray.get(position));
-                            getBanterMenuListAdapter().notifyDataSetChanged();
-                            passwordDialog.dismiss();
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(getActivity(),"Sorry, wrong password", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Abort", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordDialog.dismiss();
-                    }
-                }).show();
+    public void hasUserAccsess(final int position) {
+        passwordDialog = new Dialog(banterActivity);
+        passwordDialog.setContentView(R.layout.banter_search_input_password);
+        passwordDialog.setTitle("Input password");
+        passwordDialogYes = (ImageButton) passwordDialog.findViewById(R.id.password_dialog_input_yes);
+        passwordDialogNo = (ImageButton) passwordDialog.findViewById(R.id.password_dialog_input_no);
+        passwordDialogInput = (EditText) passwordDialog.findViewById(R.id.password_dialog_input);
+
+        passwordDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (passwordDialogInput.getText().toString().equals(searchResultArray.get(position).getPassword())) {
+                    banterActivity.banterDataModel.banterRooms.add(searchResultArray.get(position));
+                    getBanterMenuListAdapter().notifyDataSetChanged();
+                    passwordDialog.dismiss();
+                    searchDialog.dismiss();
+                }
+            }
+        });
+
+        passwordDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passwordDialog.dismiss();
+            }
+        });
+        passwordDialog.show();
     }
 
+    public Dialog getSearchDialog(){
+        return searchDialog;
+    }
 }
