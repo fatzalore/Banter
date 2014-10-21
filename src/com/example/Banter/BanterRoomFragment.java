@@ -211,10 +211,17 @@ public class BanterRoomFragment extends Fragment {
         @Override
         protected String doInBackground(String... args) {
             BanterRoom current = banterActivity.getBanterDataModel().currentRoom;
-            BanterPost last = current.getPosts().get(current.getPosts().size()-1);
+
             ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID,Integer.toString(current.getId())));
-            params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(last.getId())));
+
+            /* what is id of last post? if exists */
+            if (current.getPosts().size() > 0) {
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(current.getPosts().get(current.getPosts().size()-1).getId())));
+            } else {
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(0)));
+            }
+
             JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_POSTS,"GET",params);
             try{
                 int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
