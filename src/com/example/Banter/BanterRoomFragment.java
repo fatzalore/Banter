@@ -225,16 +225,13 @@ public class BanterRoomFragment extends Fragment {
             /* what is id of last post? if exists */
             if (current.getPosts().size() > 0) {
                 params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(current.getPosts().get(0).getId())));
-                Log.e("POST POLLING", "asking for post with name : " + current.getPosts().get(0).getName());
             } else {
                 params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(0)));
-                Log.e("POST POLLING", "asking for post with id : " + 0);
             }
 
             JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_POSTS,"GET",params);
             try{
                 int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
-                Log.e("POST POLLING", "new post request to DB : " + json.getString(BanterSQLContract.TAG_SUCCESS));
                 if (success == 1) {
                     posts = json.getJSONArray(BanterSQLContract.TAG_POSTS);
                     for (int i = 0; i < posts.length(); i++) {
@@ -330,11 +327,26 @@ public class BanterRoomFragment extends Fragment {
     }
 
     @Override
-     public void onPause() {
+    public void onPause() {
         super.onPause();
         /* cancel post polling when user is about to leave fragment */
         timer.cancel();
         /* timer set to null so background task knows if we have left the fragment */
         timer = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (timer == null) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.e("POST POLLING", "TRYING TO GET NEW POSTS");
+                    new PostPolling().execute();
+                }
+            }, 0, 5000);
+        }
     }
 }
