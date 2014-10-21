@@ -6,7 +6,10 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +30,7 @@ import java.util.Timer;
 public class BanterRoomFragment extends Fragment {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int REQ_CODE_PICK_IMAGE = 1;
 
     View banterRoomFragment;
 
@@ -73,7 +77,7 @@ public class BanterRoomFragment extends Fragment {
         
         /* bottom buttons listeners */
         addCameraListener();
-        //addAttachImageListener();
+        addAttachImageListener();
         //addSmileyListener();
         addSubmitPostListener();
 
@@ -87,6 +91,17 @@ public class BanterRoomFragment extends Fragment {
         new getLikes().execute();
 
         return banterRoomFragment;
+    }
+
+    private void addAttachImageListener() {
+        attachImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, REQ_CODE_PICK_IMAGE);
+            }
+        });
     }
 
     private void addCameraListener() {
@@ -203,6 +218,30 @@ public class BanterRoomFragment extends Fragment {
                 // Image capture failed, advise user
             }
         }
+
+        else if (requestCode == REQ_CODE_PICK_IMAGE) {
+            if(resultCode == getActivity().RESULT_OK){
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                Cursor cursor = banterActivity.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String filePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                Bitmap thumbnail = BitmapFactory.decodeFile(filePath);
+
+                /* store in currentPost */
+                currentPost.setImage(thumbnail);
+
+                /* show in ui */
+                newPostImage.setImageBitmap(thumbnail);
+                newPostImage.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 
     /* Set the custom action bar to the menu fragment */
