@@ -260,14 +260,20 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     @Override
     public void onActivityResumed(Activity activity) {
         ++resumed;
-        banterRoomFragment.timer = null;
+        if(banterRoomFragment.timer != null) {
+            banterRoomFragment.timer.cancel();
+            Log.e("@@@@@@@@@@", "CHANGING TIME INTERVAL FOR POST POLLING TO 5 sek");
+            banterRoomFragment.beginPostPolling(5000);
+        }
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
         ++paused;
+        if(banterRoomFragment.timer != null) {
             banterRoomFragment.timer.cancel();
             banterRoomFragment.beginPostPolling(30000);
+        }
         Log.e("@@@@@@@@@@@","CHANGING TIME INTERVAL FOR POST POLLING TO 30 sek");
         android.util.Log.e("test", "application is in foreground: " + (resumed > paused));
     }
