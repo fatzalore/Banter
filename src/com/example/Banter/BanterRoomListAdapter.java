@@ -6,10 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
@@ -92,7 +89,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                     new incrementOrDecrementLikes(values.get(position).getId(), OPERATOR_PLUS).execute();
 
                 } else {
-
+                    Toast.makeText(getContext(), "You have already rated this post", Toast.LENGTH_SHORT);
                 }
             }
         });
@@ -109,7 +106,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                     new incrementOrDecrementLikes(values.get(position).getId(), OPERATOR_MINUS).execute();
 
                 } else {
-
+                    Toast.makeText(getContext(), "You have already rated this post", Toast.LENGTH_SHORT);
                 }
             }
         });
