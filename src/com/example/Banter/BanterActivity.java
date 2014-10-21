@@ -27,7 +27,13 @@ import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment {
+public class BanterActivity extends Activity implements BanterMenuFragment.transactToRoomFragment, Application.ActivityLifecycleCallbacks {
+
+    private int resumed;
+    private int paused;
+    private int started;
+    private int stopped;
+
 
     int currentFragment = -1;
     boolean isNetworkAvailable = false;
@@ -56,6 +62,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getApplication().registerActivityLifecycleCallbacks(this);
         banterDataModel = new BanterDataModel();
         fragmentManager = getFragmentManager();
         loadBanterDataModel();
@@ -241,6 +248,63 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
             }
         }, 0, 5000);
     }
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        ++resumed;
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+        ++paused;
+        if(banterRoomFragment.timer != null) {
+            banterRoomFragment.timer.cancel();
+            banterRoomFragment.beginPostPolling(30000);
+        }
+        Log.e("@@@@@@@@@@@","CHANGING TIME INTERVAL FOR POST POLLING TO 30 sek");
+        android.util.Log.e("test", "application is in foreground: " + (resumed > paused));
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        ++started;
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+        ++stopped;
+        android.util.Log.e("test", "application is visible: " + (started > stopped));
+    }
+
+    // And these two public static functions
+    public boolean isApplicationVisible() {
+        if(started > stopped){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isApplicationInForeground() {
+        if(resumed > paused){
+
+            return true;
+        }
+        return false;
+    }
+
+
 }
 
 

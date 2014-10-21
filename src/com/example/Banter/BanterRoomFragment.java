@@ -1,9 +1,7 @@
 package com.example.Banter;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.ProgressDialog;
+import android.app.*;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +35,8 @@ public class BanterRoomFragment extends Fragment {
     ImageButton submitPostButton;
     EditText newPostText;
     ImageView newPostImage;
+
+    int interval = 5000;
 
     Timer timer;
     JSONArray posts = null;
@@ -82,7 +82,7 @@ public class BanterRoomFragment extends Fragment {
         banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), banterActivity.banterDataModel.currentRoom.getPosts());
         banterRoomList.setAdapter(banterRoomListAdapter);
 
-        beginPostPolling();
+        beginPostPolling(interval);
 
         return banterRoomFragment;
     }
@@ -248,6 +248,9 @@ public class BanterRoomFragment extends Fragment {
                         banterPost.setTime(c.getString(BanterSQLContract.TAG_TIME));
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
+                        if(!banterRoomFragment.isShown()) {
+                            createNotification(banterPost.getName(), banterPost.getText());
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -257,13 +260,15 @@ public class BanterRoomFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String file_url) {
-            if (timer != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getBanterRoomListAdapter().notifyDataSetChanged();
-                    }
-                });
+            if(banterRoomFragment.isShown()){
+                if (timer != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getBanterRoomListAdapter().notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         }
     }
@@ -318,7 +323,7 @@ public class BanterRoomFragment extends Fragment {
 
     }
 
-    private void beginPostPolling(){
+    public void beginPostPolling(int interval){
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -326,23 +331,37 @@ public class BanterRoomFragment extends Fragment {
                 Log.e("POST POLLING", "TRYING TO GET NEW POSTS");
                 new PostPolling().execute();
             }
-        }, 0, 5000);
+        }, 0, interval);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         /* cancel post polling when user is about to leave fragment */
-        timer.cancel();
+        //timer.cancel();
         /* timer set to null so background task knows if we have left the fragment */
-        timer = null;
+        //timer = null;
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (timer == null) {
-            beginPostPolling();
+            beginPostPolling(interval);
         }
+    }
+
+    public void createNotification(String user, String message){
+        Notification.Builder builder = new Notification.Builder(banterActivity)
+                .setSmallIcon(R.drawable.banter_logo2)
+                .setContentTitle(user)
+                .setContentText(message);
+
+        Intent resultIntent = new Intent(banterActivity,BanterActivity.class);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(banterActivity,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager)banterActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1,builder.build());
     }
 }
