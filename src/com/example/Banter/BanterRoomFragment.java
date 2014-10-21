@@ -17,9 +17,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.Date;
+import java.util.*;
 import java.util.Timer;
 
 /**
@@ -76,6 +74,8 @@ public class BanterRoomFragment extends Fragment {
 
         banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), banterActivity.banterDataModel.currentRoom.getPosts());
         banterRoomList.setAdapter(banterRoomListAdapter);
+
+        beginPostPolling();
 
         return banterRoomFragment;
     }
@@ -218,6 +218,7 @@ public class BanterRoomFragment extends Fragment {
             JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_POSTS,"GET",params);
             try{
                 int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
+                Log.v("POST POLLING", "new post request to DB : " + json.getString(BanterSQLContract.TAG_SUCCESS));
                 if (success == 1) {
                     posts = json.getJSONArray(BanterSQLContract.TAG_POSTS);
                     for (int i = 0; i < posts.length(); i++) {
@@ -272,7 +273,6 @@ public class BanterRoomFragment extends Fragment {
             JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_POST,"POST",params);
 
             try{
-                Log.v("", jsonObject.getString("message"));
                 int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
                 if(success == 1){
                     banterActivity.banterDataModel.currentRoom.addPost(currentPost);
@@ -300,5 +300,21 @@ public class BanterRoomFragment extends Fragment {
 
     }
 
+    private void beginPostPolling(){
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.v("POST POLLING", "TRYING TO GET NEW POSTS");
+                new PostPolling().execute();
+            }
+        }, 0, 5000);
+    }
 
+    @Override
+     public void onPause() {
+        super.onPause();
+        /* cancel post polling when user is about to leave fragment */
+        timer.cancel();
+    }
 }
