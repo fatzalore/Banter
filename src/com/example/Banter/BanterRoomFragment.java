@@ -89,6 +89,7 @@ public class BanterRoomFragment extends Fragment {
 
         beginPostPolling(interval);
 
+        /* get some likes too */
         new getLikes().execute();
 
         return banterRoomFragment;
@@ -426,7 +427,7 @@ public class BanterRoomFragment extends Fragment {
                     posts = json.getJSONArray(BanterSQLContract.TAG_POSTS);
                     for (int i = 0; i < posts.length(); i++) {
                         JSONObject c = posts.getJSONObject(i);
-                        BanterPost banterPost = current.getPost(i);
+                        BanterPost banterPost = current.getPost(c.getInt(BanterSQLContract.TAG_ID));
                         banterPost.setLikes(c.getInt(BanterSQLContract.TAG_LIKES));
                     }
                 }
