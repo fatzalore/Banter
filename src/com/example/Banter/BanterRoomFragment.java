@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -231,14 +232,24 @@ public class BanterRoomFragment extends Fragment {
                 String filePath = cursor.getString(columnIndex);
                 cursor.close();
 
-                Bitmap thumbnail = BitmapFactory.decodeFile(filePath);
+                Bitmap original = BitmapFactory.decodeFile(filePath);
 
-                /* store in currentPost */
+                /* resize? */
+                Display display = banterActivity.getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int width = size.x/10;
+                int height = size.y/10;
+                Bitmap thumbnail = Bitmap.createScaledBitmap(original, width, height, false);
+
+                /* store thumbnail in currentPost */
                 currentPost.setImage(thumbnail);
 
                 /* show in ui */
                 newPostImage.setImageBitmap(thumbnail);
                 newPostImage.setVisibility(View.VISIBLE);
+
+                // TODO: Store original in Database
             }
         }
 
