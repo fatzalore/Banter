@@ -4,6 +4,8 @@ import android.app.*;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -117,6 +119,8 @@ public class BanterMenuFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.banter_menu_actionbar,menu);
     }
+
+
     /* Interface to make activity transacto to BanterRoomFragment */
     public interface transactToRoomFragment {
         public void transactToRoomFragment();
@@ -226,6 +230,17 @@ public class BanterMenuFragment extends Fragment {
     class SearchRooms extends AsyncTask<String,String,String> {
 
         @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            banterActivity.progressDialog = new ProgressDialog(getActivity());
+            banterActivity.progressDialog.setMessage("Searching for room...");
+            banterActivity.progressDialog.setIndeterminate(false);
+            banterActivity.progressDialog.setCancelable(true);
+            banterActivity.progressDialog.show();
+
+        }
+
+        @Override
         protected String doInBackground(String...args) {
             ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_NAME,searchRoomDialogSearchField.getText().toString()));
@@ -256,6 +271,11 @@ public class BanterMenuFragment extends Fragment {
             }
             return null;
         }
+        @Override
+        protected void onPostExecute(String file_url) {
+            banterActivity.progressDialog.dismiss();
+        }
+
     }
 
     public void createSearchDialog(){
@@ -280,6 +300,10 @@ public class BanterMenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(searchRoomDialogSearchField.getText().toString().length() > 0){
+                    if(searchResultArray.size() > 0){
+                        searchResultArray.clear();
+                        searchDialogAdapter.notifyDataSetChanged();
+                    }
                     new SearchRooms().execute();
                 }
             }
@@ -305,7 +329,8 @@ public class BanterMenuFragment extends Fragment {
                     getBanterMenuListAdapter().notifyDataSetChanged();
                     passwordDialog.dismiss();
                     searchDialog.dismiss();
-
+                } else {
+                    Toast.makeText(banterActivity,"Sorry, wrong password",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -325,4 +350,6 @@ public class BanterMenuFragment extends Fragment {
     public void setSearchDialog(Dialog dialog){
         searchDialog = dialog;
     }
+
+
 }

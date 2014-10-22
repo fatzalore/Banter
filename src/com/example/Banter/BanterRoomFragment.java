@@ -1,5 +1,8 @@
 package com.example.Banter;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -33,11 +37,8 @@ import java.util.Timer;
  */
 public class BanterRoomFragment extends Fragment {
 
-    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    public static final int CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE = 1777;
-    public static final int REQ_CODE_PICK_IMAGE = 1;
-
-    public static final String BANTER_CAMERA_IMAGE_FOLDER_NAME = "Banter";
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int REQ_CODE_PICK_IMAGE = 1;
 
     View banterRoomFragment;
 
@@ -118,10 +119,11 @@ public class BanterRoomFragment extends Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                File file = new File(Environment.getExternalStorageDirectory()+ "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                startActivityForResult(intent, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
+                // create Intent to take a picture and return control to the calling application
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                // start the image capture Intent
+                startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE); // 100 = CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
             }
         });
     }
@@ -210,24 +212,21 @@ public class BanterRoomFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-        }
-        //Check that request code matches ours:
-        else if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == banterActivity.RESULT_OK) {
-                String imagePath = Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg";
-                //Get our saved file into a bitmap object:
-                File file = new File(imagePath);
-
-                /* Scale to a thumbnail */
-                Bitmap thumbnail = BanterImageFactory.decodeSampledBitmapFromFile(file.getAbsolutePath(), 300, 300);
+            if (resultCode == getActivity().RESULT_OK) {
+                // Image captured
+                Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
 
                 /* store in currentPost */
                 currentPost.setImage(thumbnail);
-                currentPost.setImagePath(imagePath);
 
                 /* show in ui */
                 newPostImage.setImageBitmap(thumbnail);
                 newPostImage.setVisibility(View.VISIBLE);
+
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // User cancelled the image capture
+            } else {
+                // Image capture failed, advise user
             }
         }
 
@@ -243,9 +242,15 @@ public class BanterRoomFragment extends Fragment {
                 String filePath = cursor.getString(columnIndex);
                 cursor.close();
 
-                /* get a thumbnail */
-                //Bitmap original = BanterImageFactory.decodeSampledBitmapFromFile(filePath, 1000, 750);
-                Bitmap thumbnail = BanterImageFactory.decodeSampledBitmapFromFile(filePath, 300, 300);
+                Bitmap original = BitmapFactory.decodeFile(filePath);
+
+                /* resize? */
+                Display display = banterActivity.getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int width = size.x/10;
+                int height = size.y/10;
+                Bitmap thumbnail = Bitmap.createScaledBitmap(original, width, height, false);
 
                 /* store thumbnail in currentPost */
                 currentPost.setImage(thumbnail);
@@ -253,6 +258,8 @@ public class BanterRoomFragment extends Fragment {
                 /* show in ui */
                 newPostImage.setImageBitmap(thumbnail);
                 newPostImage.setVisibility(View.VISIBLE);
+
+                // TODO: Store original in Database
             }
         }
 
@@ -302,10 +309,6 @@ public class BanterRoomFragment extends Fragment {
                         banterPost.setText(c.getString(BanterSQLContract.TAG_TEXT));
                         banterPost.setTime(c.getString(BanterSQLContract.TAG_TIME));
 
-                        if (c.getInt(BanterSQLContract.TAG_IMAGE) == 1) {
-                            banterPost.setImage(BanterImageFactory.getBitmapFromURL("http://vie.nu/banter/banterImages/image" + banterPost.getId() + ".jpeg"));
-                        }
-
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
                         if(!banterRoomFragment.isShown()) {
                             createNotification(banterPost.getName(), banterPost.getText());
@@ -335,8 +338,6 @@ public class BanterRoomFragment extends Fragment {
     /* Class handles the submition of new post */
     class CreatePost extends AsyncTask<String,String,String> {
 
-        int post_id = -1;
-
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
@@ -349,28 +350,17 @@ public class BanterRoomFragment extends Fragment {
         @Override
         protected String doInBackground(String... args) {
 
-            /* submit the post */
             ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_NAME, currentPost.getName()));
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_TEXT, currentPost.getText()));
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_TIME, currentPost.getTime()));
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID, Integer.toString(banterActivity.banterDataModel.currentRoom.getId())));
-            if (currentPost.getImage() != null) {
-                params.add(new BasicNameValuePair(BanterSQLContract.TAG_IMAGE, "1"));
-            } else {
-                params.add(new BasicNameValuePair(BanterSQLContract.TAG_IMAGE, "0"));
-            }
             JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_POST,"POST",params);
 
             try{
                 int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
                 if(success == 1){
-                    post_id = jsonObject.getInt(BanterSQLContract.TAG_POST_ID);
-                    if (currentPost.getImage() != null) {
-                        BanterImageFactory.sendImageToServer(currentPost.getImage(), "image" + post_id + ".jpeg");
-                    }
-                } else {
-                    Toast.makeText(getActivity().getBaseContext(), "Sorry, something went wrong..", Toast.LENGTH_SHORT);
+                    //banterActivity.banterDataModel.currentRoom.getPosts().add(0, currentPost);
                 }
             } catch (Exception e){
                 e.printStackTrace();
@@ -381,9 +371,18 @@ public class BanterRoomFragment extends Fragment {
         @Override
         protected void onPostExecute(String file_url) {
             banterActivity.progressDialog.dismiss();
+
             currentPost = new BanterPost();
-            currentPost.setImage(null);
+
+            /* refresh ui */
+            banterActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    banterRoomListAdapter.notifyDataSetChanged();
+                }
+            });
         }
+
     }
 
     public void beginPostPolling(int interval){
@@ -473,28 +472,4 @@ public class BanterRoomFragment extends Fragment {
         NotificationManager notificationManager = (NotificationManager)banterActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1,builder.build());
     }
-
-    /* Class handles the loading of an image */
-    class getImage extends AsyncTask<String,String,String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            Bitmap bitmap = BanterImageFactory.getBitmapFromURL("http://vie.nu/bilder/Argentina.jpg");
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String file_url) {
-            if (banterRoomFragment.isShown()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        newPostImage.setImageBitmap(currentPost.getImage());
-                        newPostImage.setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-        }
-    }
 }
-
