@@ -1,5 +1,8 @@
 package com.example.Banter;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -255,7 +259,6 @@ public class BanterRoomFragment extends Fragment {
                 newPostImage.setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     /* Set the custom action bar to the menu fragment */
@@ -265,6 +268,7 @@ public class BanterRoomFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.banter_room_actionbar, menu);
     }
+    
     public BanterRoomListAdapter getBanterRoomListAdapter(){
         return banterRoomListAdapter;
     }
@@ -307,7 +311,14 @@ public class BanterRoomFragment extends Fragment {
                         }
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
-                        if(!banterRoomFragment.isShown()) {
+                        banterActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                animateNewPosts(banterRoomList.getChildAt(0));
+                            }
+                        });
+
+                        if (!banterRoomFragment.isShown()) {
                             createNotification(banterPost.getName(), banterPost.getText());
                         }
                     }
@@ -317,6 +328,7 @@ public class BanterRoomFragment extends Fragment {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(String file_url) {
             if(banterRoomFragment.isShown()){
@@ -346,6 +358,7 @@ public class BanterRoomFragment extends Fragment {
             banterActivity.progressDialog.setCancelable(false);
             banterActivity.progressDialog.show();
         }
+
         @Override
         protected String doInBackground(String... args) {
 
@@ -460,18 +473,33 @@ public class BanterRoomFragment extends Fragment {
         }
     }
 
-    public void createNotification(String user, String message){
+    public void createNotification(String user, String message) {
         Notification.Builder builder = new Notification.Builder(banterActivity)
                 .setSmallIcon(R.drawable.banter_logo2)
                 .setContentTitle(user)
-                .setContentText(message);
+                .setContentText(message)
+                .setVibrate(new long[]{1000})
+                .setLights(Color.GREEN,3000,3000);
 
-        Intent resultIntent = new Intent(banterActivity,BanterActivity.class);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(banterActivity,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent resultIntent = new Intent(banterActivity, BanterActivity.class);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(banterActivity, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
 
-        NotificationManager notificationManager = (NotificationManager)banterActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1,builder.build());
+        NotificationManager notificationManager = (NotificationManager) banterActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
+    }
+
+    public void animateNewPosts(View view) {
+        final RelativeLayout relativeLayout = (RelativeLayout)view;
+        ObjectAnimator anim = ObjectAnimator.ofObject(relativeLayout,"anim",new ArgbEvaluator(),Color.parseColor("#137a0c"),Color.parseColor("#f2f2f2"));
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                relativeLayout.setBackgroundColor(Integer.parseInt(animation.getAnimatedValue().toString()));
+            }
+        });
+        anim.setDuration(5000);
+        anim.start();
     }
 
     /* Class handles the loading of an image */
@@ -497,4 +525,3 @@ public class BanterRoomFragment extends Fragment {
         }
     }
 }
-
