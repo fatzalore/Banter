@@ -15,6 +15,7 @@ public class BanterPost implements Serializable {
     private String name;
     private String text;
     private SerializableBitmap image;
+    private String imagePath;
     private String time;
     private int likes;
     private boolean liked;
@@ -32,6 +33,14 @@ public class BanterPost implements Serializable {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date now = new Date();
         time = sdfDate.format(now);
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public int getId() {

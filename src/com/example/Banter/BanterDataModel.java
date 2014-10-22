@@ -11,9 +11,11 @@ public class BanterDataModel implements Serializable {
     public ArrayList<BanterRoom> banterRooms;
     public BanterRoom currentRoom; // current room is what is currently polled info from and displayed in roomFragment
 
+    public int imageCounter;
 
     public BanterDataModel(){
         banterRooms = new ArrayList<BanterRoom>();
+        imageCounter = 1;
     }
 
     public ArrayList<BanterRoom> getBanterRooms() {

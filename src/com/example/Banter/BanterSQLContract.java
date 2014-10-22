@@ -26,4 +26,5 @@ public class BanterSQLContract {
      static final String TAG_LIKES = "likes";
      static final String TAG_TIME = "time";
      static final String TAG_OPERATOR = "operator";
+     static final String TAG_IMAGE = "image";
 }
