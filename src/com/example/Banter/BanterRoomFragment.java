@@ -163,9 +163,9 @@ public class BanterRoomFragment extends Fragment {
                             submitDialog.dismiss();
                         }
                     });
+                    submitDialog.show();
 
                 }
-                submitDialog.show();
             }
         });
     }
