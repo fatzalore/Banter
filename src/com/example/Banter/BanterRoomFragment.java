@@ -1,5 +1,8 @@
 package com.example.Banter;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -61,11 +65,11 @@ public class BanterRoomFragment extends Fragment {
     BanterActivity banterActivity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         banterActivity = (BanterActivity) getActivity();
         getActivity().setContentView(R.layout.banter_room_layout);
-        banterRoomFragment = inflater.inflate(R.layout.banter_room_layout,container,false);
+        banterRoomFragment = inflater.inflate(R.layout.banter_room_layout, container, false);
         banterRoomList = (ListView) banterRoomFragment.findViewById(R.id.room_chat_list);
 
         /* get the views from layout */
@@ -219,10 +223,8 @@ public class BanterRoomFragment extends Fragment {
             } else {
                 // Image capture failed, advise user
             }
-        }
-
-        else if (requestCode == REQ_CODE_PICK_IMAGE) {
-            if(resultCode == getActivity().RESULT_OK){
+        } else if (requestCode == REQ_CODE_PICK_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -239,8 +241,8 @@ public class BanterRoomFragment extends Fragment {
                 Display display = banterActivity.getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
-                int width = size.x/10;
-                int height = size.y/10;
+                int width = size.x / 10;
+                int height = size.y / 10;
                 Bitmap thumbnail = Bitmap.createScaledBitmap(original, width, height, false);
 
                 /* store thumbnail in currentPost */
@@ -258,18 +260,19 @@ public class BanterRoomFragment extends Fragment {
 
     /* Set the custom action bar to the menu fragment */
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.banter_room_actionbar, menu);
     }
-    public BanterRoomListAdapter getBanterRoomListAdapter(){
+
+    public BanterRoomListAdapter getBanterRoomListAdapter() {
         return banterRoomListAdapter;
     }
 
 
     /* Class handles the loading of the posts of a room that a user has access to */
-    class PostPolling extends AsyncTask<String,String,String> {
+    class PostPolling extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... args) {
@@ -280,13 +283,13 @@ public class BanterRoomFragment extends Fragment {
 
             /* what is id of last post? if exists */
             if (current.getPosts().size() > 0) {
-                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(current.getPosts().get(0).getId())));
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID, Integer.toString(current.getPosts().get(0).getId())));
             } else {
-                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID,Integer.toString(0)));
+                params.add(new BasicNameValuePair(BanterSQLContract.TAG_POST_ID, Integer.toString(0)));
             }
 
-            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_POSTS,"GET",params);
-            try{
+            JSONObject json = jsonParser.makeHttpRequest(BanterSQLContract.URL_GET_POSTS, "GET", params);
+            try {
                 int success = json.getInt(BanterSQLContract.TAG_SUCCESS);
                 if (success == 1) {
                     posts = json.getJSONArray(BanterSQLContract.TAG_POSTS);
@@ -301,7 +304,14 @@ public class BanterRoomFragment extends Fragment {
                         banterPost.setTime(c.getString(BanterSQLContract.TAG_TIME));
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
-                        if(!banterRoomFragment.isShown()) {
+                        banterActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                animateNewPosts(banterRoomList.getChildAt(0));
+                            }
+                        });
+
+                        if (!banterRoomFragment.isShown()) {
                             createNotification(banterPost.getName(), banterPost.getText());
                         }
                     }
@@ -311,9 +321,10 @@ public class BanterRoomFragment extends Fragment {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(String file_url) {
-            if(banterRoomFragment.isShown()){
+            if (banterRoomFragment.isShown()) {
                 if (timer != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -327,10 +338,10 @@ public class BanterRoomFragment extends Fragment {
     }
 
     /* Class handles the submition of new post */
-    class CreatePost extends AsyncTask<String,String,String> {
+    class CreatePost extends AsyncTask<String, String, String> {
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             super.onPreExecute();
             banterActivity.progressDialog = new ProgressDialog(banterActivity);
             banterActivity.progressDialog.setMessage("Submitting post...");
@@ -338,6 +349,7 @@ public class BanterRoomFragment extends Fragment {
             banterActivity.progressDialog.setCancelable(false);
             banterActivity.progressDialog.show();
         }
+
         @Override
         protected String doInBackground(String... args) {
 
@@ -346,19 +358,20 @@ public class BanterRoomFragment extends Fragment {
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_TEXT, currentPost.getText()));
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_TIME, currentPost.getTime()));
             params.add(new BasicNameValuePair(BanterSQLContract.TAG_ROOM_ID, Integer.toString(banterActivity.banterDataModel.currentRoom.getId())));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_POST,"POST",params);
+            JSONObject jsonObject = jsonParser.makeHttpRequest(BanterSQLContract.URL_CREATE_NEW_POST, "POST", params);
 
-            try{
+            try {
                 int success = jsonObject.getInt(BanterSQLContract.TAG_SUCCESS);
-                if(success == 1){
+                if (success == 1) {
                     //banterActivity.banterDataModel.currentRoom.getPosts().add(0, currentPost);
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             return null;
         }
+
         @Override
         protected void onPostExecute(String file_url) {
             banterActivity.progressDialog.dismiss();
@@ -370,13 +383,14 @@ public class BanterRoomFragment extends Fragment {
                 @Override
                 public void run() {
                     banterRoomListAdapter.notifyDataSetChanged();
+
                 }
             });
         }
 
     }
 
-    public void beginPostPolling(int interval){
+    public void beginPostPolling(int interval) {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -404,7 +418,7 @@ public class BanterRoomFragment extends Fragment {
     }
 
     /* Class handles the loading of the posts of a room that a user has access to */
-    class getLikes extends AsyncTask<String,String,String> {
+    class getLikes extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... args) {
@@ -450,17 +464,32 @@ public class BanterRoomFragment extends Fragment {
         }
     }
 
-    public void createNotification(String user, String message){
+    public void createNotification(String user, String message) {
         Notification.Builder builder = new Notification.Builder(banterActivity)
                 .setSmallIcon(R.drawable.banter_logo2)
                 .setContentTitle(user)
-                .setContentText(message);
+                .setContentText(message)
+                .setVibrate(new long[]{1000,1000,1000})
+                .setLights(Color.GREEN,3000,3000);
 
-        Intent resultIntent = new Intent(banterActivity,BanterActivity.class);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(banterActivity,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent resultIntent = new Intent(banterActivity, BanterActivity.class);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(banterActivity, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
 
-        NotificationManager notificationManager = (NotificationManager)banterActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1,builder.build());
+        NotificationManager notificationManager = (NotificationManager) banterActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
+    }
+
+    public void animateNewPosts(View view) {
+        final RelativeLayout relativeLayout = (RelativeLayout)view;
+        ObjectAnimator anim = ObjectAnimator.ofObject(relativeLayout,"anim",new ArgbEvaluator(),Color.parseColor("#137a0c"),Color.parseColor("#f2f2f2"));
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                relativeLayout.setBackgroundColor(Integer.parseInt(animation.getAnimatedValue().toString()));
+            }
+        });
+        anim.setDuration(5000);
+        anim.start();
     }
 }
