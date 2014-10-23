@@ -28,17 +28,16 @@
                 android:paddingTop="4dp"
                 android:paddingBottom="2dp" >
 
-            <ImageView
-                    android:id="@+id/room_post_camera_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    />
-
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
+                <ImageView
+                        android:id="@+id/room_post_camera_temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        />
                 <EditText
 
                         android:id="@+id/room_post_text"
@@ -51,13 +50,13 @@
                         android:paddingLeft="6dp"
                         android:layout_weight="0.8"/>
                 <ImageButton
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:id="@+id/room_textfield_submit_button" android:layout_weight="0.2"
+                        android:id="@+id/room_textfield_submit_button"
                         android:visibility="visible"
                         android:src="@drawable/ic_action_done"
                         android:adjustViewBounds="false"
-                        android:background="#FF137A0C"/>
+                        android:background="#FF137A0C" android:layout_weight="0.2"/>
             </LinearLayout>
 
         </LinearLayout>
