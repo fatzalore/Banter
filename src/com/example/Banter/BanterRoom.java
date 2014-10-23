@@ -18,6 +18,7 @@ public class BanterRoom implements Serializable {
     private ArrayList<BanterPost> posts;
     private String password;
     private String adminPassword;
+    private boolean updateChecked;
 
     public BanterRoom(String name) {
         this.name = name;
@@ -29,6 +30,12 @@ public class BanterRoom implements Serializable {
         lastUpdated = dateCreated;
         posts = new ArrayList<BanterPost>();
         amount = 0;
+    }
+    public boolean isUpdateChecked() {
+        return updateChecked;
+    }
+    public void setUpdateChecked(boolean updateChecked) {
+        this.updateChecked = updateChecked;
     }
     public String getPassword(){
         return password;

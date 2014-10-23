@@ -77,6 +77,7 @@ public class BanterMenuFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BanterActivity banterActivity = (BanterActivity) getActivity();
                 banterActivity.banterDataModel.currentRoom = banterActivity.banterDataModel.banterRooms.get(position);
+                banterActivity.banterDataModel.banterRooms.get(position).setUpdateChecked(true);
                 banterActivity.transactToRoomFragment();
             }
         });
@@ -208,7 +209,10 @@ public class BanterMenuFragment extends Fragment {
                         banterRoom.setId(roomObject.getJSONObject(0).getInt(BanterSQLContract.TAG_ID));
                         banterRoom.setAdminpassword(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_ADMINPASSWORD));
                         banterRoom.setDateCreated(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_DATE_CREATED));
-                        banterRoom.setLastUpdated(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_LAST_UPDATED));
+                        if (!roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_LAST_UPDATED).equals(banterRoom.getLastUpdated())) {
+                            banterRoom.setUpdateChecked(false);
+                            banterRoom.setLastUpdated(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_LAST_UPDATED));
+                        }
                         banterRoom.setPostAmount(roomObject.getJSONObject(0).getInt(BanterSQLContract.TAG_POSTS));
                         banterRoom.setPassword(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_PASSWORD));
 

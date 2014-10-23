@@ -43,6 +43,8 @@ public class BanterRoomFragment extends Fragment {
 
     public static final String BANTER_CAMERA_IMAGE_FOLDER_NAME = "Banter";
 
+    public static final int MAX_POST_STORED_LOCALLY = 20;
+
     View banterRoomFragment;
 
     ListView banterRoomList;
@@ -318,6 +320,11 @@ public class BanterRoomFragment extends Fragment {
                         if(banterRoomList.getChildAt(0) != null){
                             banterRoomList.getChildAt(0).setBackgroundColor(Color.parseColor("#C1FFBB"));
                         }
+                        /* more then max posts in memory? */
+                        if (banterActivity.getBanterDataModel().currentRoom.getPosts().size() > MAX_POST_STORED_LOCALLY) {
+                            /* First in First Out */
+                            banterActivity.getBanterDataModel().currentRoom.getPosts().remove(MAX_POST_STORED_LOCALLY);
+                        }
 
                         if (!banterRoomFragment.isShown()) {
                             createNotification(banterPost.getName(), banterPost.getText());
@@ -493,9 +500,9 @@ public class BanterRoomFragment extends Fragment {
         notificationManager.notify(1, builder.build());
     }
 
-    static public void animateNewPosts(View view) {
+    public void animateNewPosts(View view) {
         final RelativeLayout relativeLayout = (RelativeLayout)view;
-        ObjectAnimator anim = ObjectAnimator.ofObject(relativeLayout,"anim",new ArgbEvaluator(),Color.parseColor("#137a0c"),Color.GREEN);
+        ObjectAnimator anim = ObjectAnimator.ofObject(relativeLayout,"anim",new ArgbEvaluator(),Color.parseColor("#137a0c"),Color.parseColor("#f2f2f2"));
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
