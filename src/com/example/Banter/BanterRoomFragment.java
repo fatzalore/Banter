@@ -314,7 +314,8 @@ public class BanterRoomFragment extends Fragment {
                         banterActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                animateNewPosts(banterRoomList.getChildAt(0));
+                                if (banterRoomList.getChildAt(0) != null)
+                                    animateNewPosts(banterRoomList.getChildAt(0));
                             }
                         });
 
