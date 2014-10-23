@@ -8,10 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Point;
+import android.graphics.*;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +26,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.Timer;
 
@@ -55,6 +53,8 @@ public class BanterRoomFragment extends Fragment {
     ImageButton newPostTextSubmitButton;
     EditText newPostText;
     ImageView newPostImage;
+
+    String supportedImageExtension = ".jpeg";
 
     int interval = 5000;
 
@@ -128,7 +128,7 @@ public class BanterRoomFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                File file = new File(Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
+                File file = new File(Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + supportedImageExtension);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                 startActivityForResult(intent, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
             }
@@ -224,10 +224,9 @@ public class BanterRoomFragment extends Fragment {
         //Check that request code matches ours:
         else if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == banterActivity.RESULT_OK) {
-                String imagePath = Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg";
+                String imagePath = Environment.getExternalStorageDirectory()+ "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + supportedImageExtension;
                 //Get our saved file into a bitmap object:
                 File file = new File(imagePath);
-
                 /* Scale to a thumbnail */
                 Bitmap thumbnail = BanterImageFactory.decodeSampledBitmapFromFile(file.getAbsolutePath(), 300, 300);
 
@@ -262,8 +261,7 @@ public class BanterRoomFragment extends Fragment {
 
                 /* show in ui */
                 newPostImage.setImageBitmap(thumbnail);
-                newPostImage.setVisibility(View.VISIBLE);
-            }
+           }
         }
     }
 
@@ -314,7 +312,7 @@ public class BanterRoomFragment extends Fragment {
                         banterPost.setUpdateChecked(false);
 
                         if (c.getInt(BanterSQLContract.TAG_IMAGE) == 1) {
-                            banterPost.setImage(BanterImageFactory.getBitmapFromURL("http://vie.nu/banter/banterImages/image" + banterPost.getId() + ".jpeg"));
+                            banterPost.setImage(BanterImageFactory.getBitmapFromURL("http://vie.nu/banter/banterImages/image" + banterPost.getId() + supportedImageExtension));
                         }
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
