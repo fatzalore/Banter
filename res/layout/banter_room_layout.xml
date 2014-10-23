@@ -36,19 +36,32 @@
                     android:visibility="gone"
                     />
 
-            <EditText
-
-                    android:id="@+id/room_post_text"
+            <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="#137A0C"
-                    android:hint="Write here.."
-                    android:textColorHint="#FFFFFF"
-                    android:textColor="#FFFFFF"
-                    android:paddingLeft="6dp"
-                    />
+                    android:layout_height="fill_parent">
+                <EditText
 
-                </LinearLayout>
+                        android:id="@+id/room_post_text"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:background="#137A0C"
+                        android:hint="Write here.."
+                        android:textColorHint="#FFFFFF"
+                        android:textColor="#FFFFFF"
+                        android:paddingLeft="6dp"
+                        android:layout_weight="0.8"/>
+                <ImageButton
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:id="@+id/room_textfield_submit_button" android:layout_weight="0.2"
+                        android:visibility="visible"
+                        android:src="@drawable/ic_action_done"
+                        android:adjustViewBounds="false"
+                        android:background="#FF137A0C"/>
+            </LinearLayout>
+
+        </LinearLayout>
 
 
             <LinearLayout
@@ -64,7 +77,8 @@
                             android:src="@drawable/ic_action_photo"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.20"
+                            android:layout_weight="0.33"
+
 
                                 />
                     <ImageButton
@@ -72,24 +86,18 @@
                             android:src="@drawable/ic_action_attach"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.20"
+                            android:layout_weight="0.33"
+
                             />
                     <ImageButton
                             android:id="@+id/room_post_smiley_button"
                             android:src="@drawable/ic_action_user"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.20"
-                            />
-                    <ImageButton
-                            android:id="@+id/room_post_submit_button"
-                            android:src="@drawable/ic_action_done"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.40"
+                            android:layout_weight="0.33"
                             />
 
-                    </LinearLayout>
+            </LinearLayout>
 
             </LinearLayout>
 

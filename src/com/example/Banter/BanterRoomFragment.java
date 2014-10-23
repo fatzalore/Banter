@@ -52,6 +52,7 @@ public class BanterRoomFragment extends Fragment {
     ImageButton attachImageButton;
     ImageButton smileyButton;
     ImageButton submitPostButton;
+    ImageButton newPostTextSubmitButton;
     EditText newPostText;
     ImageView newPostImage;
 
@@ -86,9 +87,10 @@ public class BanterRoomFragment extends Fragment {
         cameraButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_camera_button);
         attachImageButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_image_button);
         smileyButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_smiley_button);
-        submitPostButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_submit_button);
+        //submitPostButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_submit_button);
         newPostText = (EditText) banterRoomFragment.findViewById(R.id.room_post_text);
         newPostImage = (ImageView) banterRoomFragment.findViewById(R.id.room_post_camera_temp);
+        newPostTextSubmitButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_textfield_submit_button);
         
         /* bottom buttons listeners */
         addCameraListener();
@@ -133,9 +135,8 @@ public class BanterRoomFragment extends Fragment {
         });
     }
 
-
     private void addSubmitPostListener() {
-        submitPostButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener submitListener =  new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 /* set data into currentPost */
@@ -180,9 +181,10 @@ public class BanterRoomFragment extends Fragment {
                     });
                     submitDialog.show();
                 }
-
             }
-        });
+        };
+        //submitPostButton.setOnClickListener(submitListener);
+        newPostTextSubmitButton.setOnClickListener(submitListener);
     }
 
     /* If a user holds down on a temporary picture, give option to remove */
