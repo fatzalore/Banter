@@ -19,6 +19,7 @@ public class BanterPost implements Serializable {
     private String time;
     private int likes;
     private boolean liked;
+    private boolean updateChecked;
 
     public BanterPost() {
         liked = false;
@@ -37,6 +38,12 @@ public class BanterPost implements Serializable {
 
     public String getImagePath() {
         return imagePath;
+    }
+    public boolean getUpdateChecked(){
+        return updateChecked;
+    }
+    public void setUpdateChecked(boolean updateChecked){
+        this.updateChecked = updateChecked;
     }
 
     public void setImagePath(String imagePath) {

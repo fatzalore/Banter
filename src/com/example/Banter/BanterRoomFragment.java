@@ -103,6 +103,7 @@ public class BanterRoomFragment extends Fragment {
 
         beginPostPolling(interval);
 
+
         /* get some likes too */
         new getLikes().execute();
 
@@ -131,6 +132,7 @@ public class BanterRoomFragment extends Fragment {
             }
         });
     }
+
 
     private void addSubmitPostListener() {
         submitPostButton.setOnClickListener(new View.OnClickListener() {
@@ -176,9 +178,9 @@ public class BanterRoomFragment extends Fragment {
                             submitDialog.dismiss();
                         }
                     });
-
+                    submitDialog.show();
                 }
-                submitDialog.show();
+
             }
         });
     }
@@ -307,6 +309,7 @@ public class BanterRoomFragment extends Fragment {
                         banterPost.setLikes(c.getInt(BanterSQLContract.TAG_LIKES));
                         banterPost.setText(c.getString(BanterSQLContract.TAG_TEXT));
                         banterPost.setTime(c.getString(BanterSQLContract.TAG_TIME));
+                        banterPost.setUpdateChecked(false);
 
                         if (c.getInt(BanterSQLContract.TAG_IMAGE) == 1) {
                             banterPost.setImage(BanterImageFactory.getBitmapFromURL("http://vie.nu/banter/banterImages/image" + banterPost.getId() + ".jpeg"));
@@ -314,20 +317,14 @@ public class BanterRoomFragment extends Fragment {
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
 
+                        if(banterRoomList.getChildAt(0) != null){
+                            banterRoomList.getChildAt(0).setBackgroundColor(Color.parseColor("#C1FFBB"));
+                        }
                         /* more then max posts in memory? */
                         if (banterActivity.getBanterDataModel().currentRoom.getPosts().size() > MAX_POST_STORED_LOCALLY) {
                             /* First in First Out */
                             banterActivity.getBanterDataModel().currentRoom.getPosts().remove(MAX_POST_STORED_LOCALLY);
                         }
-
-                        banterActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(banterRoomList.getChildAt(0) != null) {
-                                    animateNewPosts(banterRoomList.getChildAt(0));
-                                }
-                            }
-                        });
 
                         if (!banterRoomFragment.isShown()) {
                             createNotification(banterPost.getName(), banterPost.getText());
@@ -423,6 +420,9 @@ public class BanterRoomFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        for(BanterPost banterPost : banterActivity.banterDataModel.currentRoom.getPosts()){
+            banterPost.setUpdateChecked(true);
+        }
         /* cancel post polling when user is about to leave fragment */
         //timer.cancel();
         /* timer set to null so background task knows if we have left the fragment */
@@ -489,7 +489,7 @@ public class BanterRoomFragment extends Fragment {
                 .setSmallIcon(R.drawable.banter_logo2)
                 .setContentTitle(user)
                 .setContentText(message)
-                .setVibrate(new long[]{1000})
+                .setVibrate(new long[]{1000,1000,1000})
                 .setLights(Color.GREEN,3000,3000);
 
         Intent resultIntent = new Intent(banterActivity, BanterActivity.class);
@@ -510,6 +510,7 @@ public class BanterRoomFragment extends Fragment {
             }
         });
         anim.setDuration(5000);
+        anim.setRepeatCount(1);
         anim.start();
     }
 
