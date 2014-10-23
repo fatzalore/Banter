@@ -37,6 +37,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         TextView likes;
         ImageButton incLike;
         ImageButton decLike;
+        boolean finishedAnimation = false;
     }
 
     public BanterRoomListAdapter(Context context, ArrayList<BanterPost> values){
@@ -78,6 +79,14 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
             viewHolderItem.image.setVisibility(View.GONE);
         }
 
+        if(!values.get(position).getUpdateChecked()){
+                convertView.setBackgroundColor(Color.parseColor("#C1FFBB"));
+                viewHolderItem.finishedAnimation = true;
+
+        } else {
+            convertView.setBackgroundColor(Color.parseColor("#f2f2f2"));
+        }
+
         viewHolderItem.name.setText(values.get(position).getName());
         viewHolderItem.text.setText(values.get(position).getText());
         viewHolderItem.likes.setText(Integer.toString(values.get(position).getLikes()));
@@ -116,6 +125,11 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                 }
             }
         });
+        if(values.get(position).getLikes() >= 0){
+            viewHolderItem.likes.setTextColor(Color.parseColor("#137a0c"));
+        } else {
+            viewHolderItem.likes.setTextColor(Color.RED);
+        }
 
         return convertView;
     }
