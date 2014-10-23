@@ -53,10 +53,12 @@ public class BanterMenuFragment extends Fragment {
         banterActivity.setContentView(R.layout.banter_menu_layout);
         banterMenuFragment = inflater.inflate(R.layout.banter_menu_layout,container,false);
         banterRoomList = (ListView) banterMenuFragment.findViewById(R.id.banter_room_list);
-        // testing
+
+        banterActivity.setTitle("Your rooms");
+        banterActivity.getActionBar().setDisplayHomeAsUpEnabled(false);
+
         banterMenuListAdapter = new BanterMenuListAdapter(getActivity().getBaseContext(),banterActivity.banterDataModel.getBanterRooms());
         banterRoomList.setAdapter(banterMenuListAdapter);
-        // testing
 
         if(banterActivity.isNetworkAvailable) {
             if(banterActivity.banterDataModel.banterRooms.size() > 0){
@@ -355,6 +357,5 @@ public class BanterMenuFragment extends Fragment {
     public void setSearchDialog(Dialog dialog){
         searchDialog = dialog;
     }
-
 
 }

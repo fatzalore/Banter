@@ -83,6 +83,9 @@ public class BanterRoomFragment extends Fragment {
         banterRoomFragment = inflater.inflate(R.layout.banter_room_layout,container,false);
         banterRoomList = (ListView) banterRoomFragment.findViewById(R.id.room_chat_list);
 
+        banterActivity.setTitle(banterActivity.banterDataModel.currentRoom.getName());
+        banterActivity.getActionBar().setDisplayHomeAsUpEnabled(true);
+
         /* get the views from layout */
         cameraButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_camera_button);
         attachImageButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_image_button);
@@ -103,6 +106,8 @@ public class BanterRoomFragment extends Fragment {
         banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), banterActivity.banterDataModel.currentRoom.getPosts());
         banterRoomList.setAdapter(banterRoomListAdapter);
 
+        setBanterRoomListOnClickListener();
+
         beginPostPolling(interval);
 
 
@@ -110,6 +115,18 @@ public class BanterRoomFragment extends Fragment {
         new getLikes().execute();
 
         return banterRoomFragment;
+    }
+
+    private void setBanterRoomListOnClickListener(){
+
+        /* Listen for item clicks */
+        banterRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                banterActivity.banterDataModel.currentRoom.getPosts().get(i).setUpdateChecked(true);
+                banterRoomListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void addAttachImageListener() {
@@ -128,7 +145,7 @@ public class BanterRoomFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                File file = new File(Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
+                File file = new File(Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpeg");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                 startActivityForResult(intent, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
             }
@@ -224,7 +241,7 @@ public class BanterRoomFragment extends Fragment {
         //Check that request code matches ours:
         else if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == banterActivity.RESULT_OK) {
-                String imagePath = Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg";
+                String imagePath = Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpeg";
                 //Get our saved file into a bitmap object:
                 File file = new File(imagePath);
 
@@ -319,9 +336,6 @@ public class BanterRoomFragment extends Fragment {
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
 
-                        if(banterRoomList.getChildAt(0) != null){
-                            banterRoomList.getChildAt(0).setBackgroundColor(Color.parseColor("#C1FFBB"));
-                        }
                         /* more then max posts in memory? */
                         if (banterActivity.getBanterDataModel().currentRoom.getPosts().size() > MAX_POST_STORED_LOCALLY) {
                             /* First in First Out */
