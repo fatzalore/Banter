@@ -19,6 +19,7 @@ public class BanterRoom implements Serializable {
     private String password;
     private String adminPassword;
     private boolean updateChecked;
+    private String timeSinceLastUpdated;
 
     public BanterRoom(String name) {
         this.name = name;
@@ -52,6 +53,50 @@ public class BanterRoom implements Serializable {
     public void addPost(BanterPost post) {
         amount++;
         posts.add(post);
+    }
+
+    public String getTimeSinceLastUpdated() {
+        return timeSinceLastUpdated;
+    }
+
+    public void setTimeSinceLastUpdated() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date now = new Date();
+        String nowString = sdfDate.format(now);
+
+        /* TODO: find months/days since last post to */
+
+        /* finding hours/minutes since last post */
+        int nowHours = Integer.parseInt(nowString.substring(11, 12));
+        int nowMinutes = Integer.parseInt(nowString.substring(14, 15));
+        int lastHours = Integer.parseInt(lastUpdated.substring(11, 12));
+        int lastMinutes = Integer.parseInt(lastUpdated.substring(14, 15));
+        int minutes;
+        int hours;
+        if (nowHours > lastHours) {
+            hours = nowHours - lastHours;
+        } else if (nowHours < lastHours){
+            hours = 24 - lastHours + nowHours;
+        } else {
+            hours = 0;
+        }
+        if (nowMinutes > lastMinutes) {
+            minutes = nowMinutes - lastMinutes;
+        } else if (nowMinutes < lastMinutes) {
+            minutes = 60 - lastMinutes + nowMinutes;
+            hours--;
+        } else {
+            minutes = 0;
+        }
+        timeSinceLastUpdated = "";
+        if (hours > 0) {
+            timeSinceLastUpdated = hours + " days ago";
+        }
+        else if (minutes > 0) {
+            timeSinceLastUpdated = minutes + " minutes ago";
+        } else {
+            timeSinceLastUpdated = "just now";
+        }
     }
 
     public ArrayList<BanterPost> getPosts() {
@@ -109,5 +154,9 @@ public class BanterRoom implements Serializable {
             }
         }
         return null;
+    }
+
+    public String getTimeSinceLastUpdate() {
+        return timeSinceLastUpdated;
     }
 }

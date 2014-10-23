@@ -212,6 +212,7 @@ public class BanterMenuFragment extends Fragment {
                         if (!roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_LAST_UPDATED).equals(banterRoom.getLastUpdated())) {
                             banterRoom.setUpdateChecked(false);
                             banterRoom.setLastUpdated(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_LAST_UPDATED));
+                            banterRoom.setTimeSinceLastUpdated();
                         }
                         banterRoom.setPostAmount(roomObject.getJSONObject(0).getInt(BanterSQLContract.TAG_POSTS));
                         banterRoom.setPassword(roomObject.getJSONObject(0).getString(BanterSQLContract.TAG_PASSWORD));
