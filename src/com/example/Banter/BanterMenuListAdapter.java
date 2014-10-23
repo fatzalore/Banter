@@ -54,7 +54,8 @@ public class BanterMenuListAdapter extends ArrayAdapter<BanterRoom> {
         } else {
             viewHolderItem.lastUpdated.setTextColor(Color.parseColor("#137a0c"));
             viewHolderItem.posts.setTextColor(Color.parseColor("#137a0c"));
-            viewHolderItem.lastUpdated.setText(banterRoom.getLastUpdated() + " - " + banterRoom.getTimeSinceLastUpdate());
+            viewHolderItem.lastUpdated.setText(banterRoom.getLastUpdated());
+            //viewHolderItem.lastUpdated.setText(banterRoom.getLastUpdated() + " - " + banterRoom.getTimeSinceLastUpdate());
         }
         viewHolderItem.posts.setText(Integer.toString(banterRoom.getPostAmount()));
 
