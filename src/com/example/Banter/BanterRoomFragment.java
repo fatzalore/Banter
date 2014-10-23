@@ -261,7 +261,8 @@ public class BanterRoomFragment extends Fragment {
 
                 /* show in ui */
                 newPostImage.setImageBitmap(thumbnail);
-           }
+                newPostImage.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -317,9 +318,6 @@ public class BanterRoomFragment extends Fragment {
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
 
-                        if(banterRoomList.getChildAt(0) != null){
-                            banterRoomList.getChildAt(0).setBackgroundColor(Color.parseColor("#C1FFBB"));
-                        }
                         /* more then max posts in memory? */
                         if (banterActivity.getBanterDataModel().currentRoom.getPosts().size() > MAX_POST_STORED_LOCALLY) {
                             /* First in First Out */
