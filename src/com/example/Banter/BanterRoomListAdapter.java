@@ -74,6 +74,8 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
         if (values.get(position).getImage() != null) {
             viewHolderItem.image.setImageBitmap(values.get(position).getImage());
             viewHolderItem.image.setVisibility(View.VISIBLE);
+        } else {
+            viewHolderItem.image.setVisibility(View.GONE);
         }
 
         viewHolderItem.name.setText(values.get(position).getName());
@@ -93,7 +95,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                     new incrementOrDecrementLikes(values.get(position).getId(), OPERATOR_PLUS).execute();
 
                 } else {
-                    Toast.makeText(getContext(), "You have already rated this post", Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(), "You have already rated this post", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -110,7 +112,7 @@ public class BanterRoomListAdapter extends ArrayAdapter<BanterPost> {
                     new incrementOrDecrementLikes(values.get(position).getId(), OPERATOR_MINUS).execute();
 
                 } else {
-                    Toast.makeText(getContext(), "You have already rated this post", Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(), "You have already rated this post", Toast.LENGTH_SHORT).show();
                 }
             }
         });

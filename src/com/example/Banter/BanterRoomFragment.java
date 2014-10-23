@@ -123,7 +123,7 @@ public class BanterRoomFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                File file = new File(Environment.getExternalStorageDirectory()+ "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
+                File file = new File(Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                 startActivityForResult(intent, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
             }
@@ -311,10 +311,13 @@ public class BanterRoomFragment extends Fragment {
                         }
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
+
                         banterActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                animateNewPosts(banterRoomList.getChildAt(0));
+                                if(banterRoomList.getChildAt(0) != null) {
+                                    animateNewPosts(banterRoomList.getChildAt(0));
+                                }
                             }
                         });
 
@@ -478,7 +481,7 @@ public class BanterRoomFragment extends Fragment {
                 .setSmallIcon(R.drawable.banter_logo2)
                 .setContentTitle(user)
                 .setContentText(message)
-                .setVibrate(new long[]{1000})
+                .setVibrate(new long[]{1000,1000,1000})
                 .setLights(Color.GREEN,3000,3000);
 
         Intent resultIntent = new Intent(banterActivity, BanterActivity.class);
