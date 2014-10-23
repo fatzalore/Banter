@@ -1,6 +1,7 @@
 package com.example.Banter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,11 @@ public class BanterMenuListAdapter extends ArrayAdapter<BanterRoom> {
             viewHolderItem = (ViewHolderItem) convertView.getTag();
         }
         viewHolderItem.groupName.setText(banterRoom.getName());
+        if (banterRoom.isUpdateChecked()) {
+            viewHolderItem.lastUpdated.setTextColor(Color.BLACK);
+        } else {
+            viewHolderItem.lastUpdated.setTextColor(Color.parseColor("#137a0c"));
+        }
         viewHolderItem.lastUpdated.setText(banterRoom.getLastUpdated());
         viewHolderItem.posts.setText(Integer.toString(banterRoom.getPostAmount()));
         return convertView;

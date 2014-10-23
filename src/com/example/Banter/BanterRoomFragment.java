@@ -43,6 +43,8 @@ public class BanterRoomFragment extends Fragment {
 
     public static final String BANTER_CAMERA_IMAGE_FOLDER_NAME = "Banter";
 
+    public static final int MAX_POST_STORED_LOCALLY = 20;
+
     View banterRoomFragment;
 
     ListView banterRoomList;
@@ -311,6 +313,13 @@ public class BanterRoomFragment extends Fragment {
                         }
 
                         banterActivity.getBanterDataModel().currentRoom.getPosts().add(0, banterPost);
+
+                        /* more then max posts in memory? */
+                        if (banterActivity.getBanterDataModel().currentRoom.getPosts().size() > MAX_POST_STORED_LOCALLY) {
+                            /* First in First Out */
+                            banterActivity.getBanterDataModel().currentRoom.getPosts().remove(MAX_POST_STORED_LOCALLY);
+                        }
+
                         banterActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
