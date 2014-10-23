@@ -57,8 +57,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     ProgressDialog progressDialog;
     JSONParser jsonParser = new JSONParser();
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,11 +104,11 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(
-                                getBaseContext(),
-                                "You Clicked : " + item.getTitle(),
-                                Toast.LENGTH_SHORT
-                        ).show();
+                        switch (item.getItemId()) {
+                            case R.id.options_leave_room:
+                                transact(banterMenuFragment);
+                                break;
+                        }
                         return true;
                     }
                 });
@@ -301,16 +299,6 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
         }
         return false;
     }
-
-    public boolean isApplicationInForeground() {
-        if(resumed > paused){
-
-            return true;
-        }
-        return false;
-    }
-
-
 }
 
 

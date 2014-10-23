@@ -84,7 +84,8 @@ public class BanterRoomFragment extends Fragment {
         banterRoomList = (ListView) banterRoomFragment.findViewById(R.id.room_chat_list);
 
         banterActivity.setTitle(banterActivity.banterDataModel.currentRoom.getName());
-        banterActivity.getActionBar().setDisplayHomeAsUpEnabled(true);
+        //banterActivity.getActionBar().setDisplayHomeAsUpEnabled(true);
+        //Commented because i could not be able to set onclicklistener anywhere..
 
         /* get the views from layout */
         cameraButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_camera_button);
@@ -344,6 +345,17 @@ public class BanterRoomFragment extends Fragment {
 
                         if (!banterRoomFragment.isShown()) {
                             createNotification(banterPost.getName(), banterPost.getText());
+                        }
+
+                        if(banterRoomFragment.isShown()){
+                            if (timer != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getBanterRoomListAdapter().notifyDataSetChanged();
+                                    }
+                                });
+                            }
                         }
                     }
                 }
