@@ -63,6 +63,7 @@ public class BanterActivity extends Activity implements BanterMenuFragment.trans
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getApplication().registerActivityLifecycleCallbacks(this);
+
         banterDataModel = new BanterDataModel();
         fragmentManager = getFragmentManager();
         loadBanterDataModel();

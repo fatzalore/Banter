@@ -83,6 +83,9 @@ public class BanterRoomFragment extends Fragment {
         banterRoomFragment = inflater.inflate(R.layout.banter_room_layout,container,false);
         banterRoomList = (ListView) banterRoomFragment.findViewById(R.id.room_chat_list);
 
+        banterActivity.setTitle(banterActivity.banterDataModel.currentRoom.getName());
+        banterActivity.getActionBar().setDisplayHomeAsUpEnabled(true);
+
         /* get the views from layout */
         cameraButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_camera_button);
         attachImageButton = (ImageButton) banterRoomFragment.findViewById(R.id.room_post_image_button);
@@ -103,6 +106,8 @@ public class BanterRoomFragment extends Fragment {
         banterRoomListAdapter = new BanterRoomListAdapter(getActivity().getBaseContext(), banterActivity.banterDataModel.currentRoom.getPosts());
         banterRoomList.setAdapter(banterRoomListAdapter);
 
+        setBanterRoomListOnClickListener();
+
         beginPostPolling(interval);
 
 
@@ -110,6 +115,18 @@ public class BanterRoomFragment extends Fragment {
         new getLikes().execute();
 
         return banterRoomFragment;
+    }
+
+    private void setBanterRoomListOnClickListener(){
+
+        /* Listen for item clicks */
+        banterRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                banterActivity.banterDataModel.currentRoom.getPosts().get(i).setUpdateChecked(true);
+                banterRoomListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void addAttachImageListener() {
@@ -227,6 +244,7 @@ public class BanterRoomFragment extends Fragment {
                 String imagePath = Environment.getExternalStorageDirectory()+ "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + supportedImageExtension;
                 //Get our saved file into a bitmap object:
                 File file = new File(imagePath);
+
                 /* Scale to a thumbnail */
                 Bitmap thumbnail = BanterImageFactory.decodeSampledBitmapFromFile(file.getAbsolutePath(), 300, 300);
 
