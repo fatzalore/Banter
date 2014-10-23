@@ -123,7 +123,7 @@ public class BanterRoomFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                File file = new File(Environment.getExternalStorageDirectory()+ "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
+                File file = new File(Environment.getExternalStorageDirectory() + "/" + BANTER_CAMERA_IMAGE_FOLDER_NAME + File.separator + "image" + banterActivity.banterDataModel.imageCounter + ".jpg");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                 startActivityForResult(intent, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
             }
@@ -314,8 +314,9 @@ public class BanterRoomFragment extends Fragment {
                         banterActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (banterRoomList.getChildAt(0) != null)
+                                if(banterRoomList.getChildAt(0) != null) {
                                     animateNewPosts(banterRoomList.getChildAt(0));
+                                }
                             }
                         });
 
